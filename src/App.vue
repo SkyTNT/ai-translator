@@ -41,6 +41,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useDisplay } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 import { useProfileStore } from './stores/profileStore'
 import { useSessionStore } from './stores/sessionStore'
@@ -54,7 +55,8 @@ const { t } = useI18n()
 const profileStore = useProfileStore()
 const sessionStore = useSessionStore()
 
-const sidebarOpen = ref(true)
+const { mdAndUp } = useDisplay()
+const sidebarOpen = ref(mdAndUp.value)
 const profileDialogOpen = ref(false)
 const theme = ref('light')
 
@@ -63,3 +65,10 @@ function newSession() {
   sessionStore.createSession(profileStore.activeProfileId, name)
 }
 </script>
+
+<style>
+.v-main__wrap {
+  display: flex;
+  flex-direction: column;
+}
+</style>

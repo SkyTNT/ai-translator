@@ -1,5 +1,5 @@
 <template>
-  <div class="message-input-area border-t pa-3" style="background: rgb(var(--v-theme-surface));">
+  <div class="message-input-area border-t pa-3 w-100" style="background: rgb(var(--v-theme-surface));">
     <!-- Attachments preview -->
     <div v-if="attachedImages.length || attachedAudio" class="d-flex flex-wrap align-center gap-2 mb-2">
       <!-- Image chips -->
@@ -77,97 +77,90 @@
       </v-sheet>
     </div>
 
-    <!-- Role selector + input row -->
-    <div class="d-flex align-end gap-2">
-      <!-- Role toggle -->
-      <div class="d-flex flex-column align-center flex-shrink-0">
-        <v-btn-toggle
-          v-model="role"
-          mandatory
-          density="compact"
-          divided
-          rounded="pill"
-          color="primary"
-          variant="outlined"
-          style="height: 36px;"
-        >
-          <v-btn value="self" size="small" class="text-none px-3">{{ t('chat.self') }}</v-btn>
-          <v-btn value="other" size="small" class="text-none px-3">{{ t('chat.other') }}</v-btn>
-        </v-btn-toggle>
-      </div>
-
-      <!-- Text input -->
-      <v-textarea
-        v-model="inputText"
-        :placeholder="role === 'self' ? t('input.placeholderSelf', { lang: sourceLang }) : t('input.placeholderOther', { lang: targetLang })"
+    <!-- Role selector + action buttons row -->
+    <div class="d-flex align-center gap-2 mb-2">
+      <v-btn-toggle
+        v-model="role"
+        mandatory
         density="compact"
+        divided
+        rounded="pill"
+        color="primary"
         variant="outlined"
-        hide-details
-        rows="1"
-        auto-grow
-        max-rows="6"
-        class="flex-grow-1"
-        @keydown.enter.exact.prevent="send"
-        @keydown.enter.shift.exact="inputText += '\n'"
-        @paste="handlePaste"
+        style="height: 32px;"
+      >
+        <v-btn value="self" size="small" class="text-none px-3">{{ t('chat.self') }}</v-btn>
+        <v-btn value="other" size="small" class="text-none px-3">{{ t('chat.other') }}</v-btn>
+      </v-btn-toggle>
+
+      <v-spacer />
+
+      <!-- Image upload -->
+      <v-tooltip :text="t('input.uploadImage')" location="top">
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-image-outline"
+            variant="text"
+            size="small"
+            color="grey-darken-1"
+            @click="imageInput.click()"
+          />
+        </template>
+      </v-tooltip>
+
+      <!-- Audio record -->
+      <v-tooltip :text="isRecording ? t('input.stopRecording') : t('input.recordAudio')" location="top">
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            :icon="isRecording ? 'mdi-stop-circle' : 'mdi-microphone-outline'"
+            :color="isRecording ? 'error' : 'grey-darken-1'"
+            variant="text"
+            size="small"
+            @click="toggleRecording"
+          />
+        </template>
+      </v-tooltip>
+
+      <!-- Audio upload -->
+      <v-tooltip :text="t('input.uploadAudio')" location="top">
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-file-music-outline"
+            color="grey-darken-1"
+            variant="text"
+            size="small"
+            @click="audioInput.click()"
+          />
+        </template>
+      </v-tooltip>
+
+      <!-- Send button -->
+      <v-btn
+        :disabled="!canSend"
+        color="primary"
+        icon="mdi-send"
+        size="small"
+        @click="send"
       />
-
-      <!-- Action buttons -->
-      <div class="d-flex flex-column gap-1 flex-shrink-0">
-        <div class="d-flex gap-1">
-          <!-- Image upload -->
-          <v-tooltip :text="t('input.uploadImage')" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                icon="mdi-image-outline"
-                variant="text"
-                size="small"
-                color="grey-darken-1"
-                @click="imageInput.click()"
-              />
-            </template>
-          </v-tooltip>
-
-          <!-- Audio record -->
-          <v-tooltip :text="isRecording ? t('input.stopRecording') : t('input.recordAudio')" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :icon="isRecording ? 'mdi-stop-circle' : 'mdi-microphone-outline'"
-                :color="isRecording ? 'error' : 'grey-darken-1'"
-                variant="text"
-                size="small"
-                @click="toggleRecording"
-              />
-            </template>
-          </v-tooltip>
-
-          <!-- Audio upload -->
-          <v-tooltip :text="t('input.uploadAudio')" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                icon="mdi-file-music-outline"
-                color="grey-darken-1"
-                variant="text"
-                size="small"
-                @click="audioInput.click()"
-              />
-            </template>
-          </v-tooltip>
-        </div>
-
-        <!-- Send button -->
-        <v-btn
-          :disabled="!canSend"
-          color="primary"
-          icon="mdi-send"
-          size="small"
-          @click="send"
-        />
-      </div>
     </div>
+
+    <!-- Text input full width -->
+    <v-textarea
+      v-model="inputText"
+      :placeholder="role === 'self' ? t('input.placeholderSelf', { lang: sourceLang }) : t('input.placeholderOther', { lang: targetLang })"
+      density="compact"
+      variant="outlined"
+      hide-details
+      rows="1"
+      auto-grow
+      max-rows="6"
+      @keydown.enter.exact.prevent="send"
+      @keydown.enter.shift.exact="inputText += '\n'"
+      @paste="handlePaste"
+    />
 
     <!-- Recording indicator -->
     <div v-if="isRecording" class="d-flex align-center gap-2 mt-2">

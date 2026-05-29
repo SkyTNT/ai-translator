@@ -4,6 +4,13 @@ import { ref, computed } from 'vue'
 export const useSessionStore = defineStore('sessions', () => {
   const sessions = ref(JSON.parse(localStorage.getItem('translator_sessions') || '[]'))
   const activeSessionId = ref(localStorage.getItem('translator_active_session') || null)
+  function allocSessionId() {
+    return sessions.value.length === 0 ? 1 : Math.max(...sessions.value.map(s => s.id)) + 1
+  }
+
+  function allocMessageId(messages) {
+    return messages.length === 0 ? 1 : Math.max(...messages.map(m => m.id)) + 1
+  }
 
   if (activeSessionId.value && !sessions.value.find(s => s.id === activeSessionId.value)) {
     activeSessionId.value = sessions.value[0]?.id || null
@@ -18,7 +25,7 @@ export const useSessionStore = defineStore('sessions', () => {
 
   function createSession(profileId, name) {
     const s = {
-      id: crypto.randomUUID(),
+      id: allocSessionId(),
       name: name || `会话 ${sessions.value.length + 1}`,
       profileId,
       messages: [],
@@ -52,7 +59,7 @@ export const useSessionStore = defineStore('sessions', () => {
   function addMessage(sessionId, msg) {
     const s = sessions.value.find(s => s.id === sessionId)
     if (!s) return null
-    const m = { id: crypto.randomUUID(), ...msg, timestamp: new Date().toISOString() }
+    const m = { id: allocMessageId(s.messages), ...msg, timestamp: new Date().toISOString() }
     s.messages.push(m)
     s.updatedAt = new Date().toISOString()
     persist()

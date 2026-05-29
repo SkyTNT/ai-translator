@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column" style="height: calc(100vh - 64px);">
+  <div class="d-flex flex-column h-100">
     <div ref="messagesEl" class="flex-grow-1 overflow-y-auto pa-4" style="scroll-behavior: smooth;">
       <template v-if="session.messages.length">
         <MessageBubble

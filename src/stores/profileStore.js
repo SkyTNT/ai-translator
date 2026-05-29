@@ -1,7 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-export const DEFAULT_SYSTEM_PROMPT = `You are a professional real-time conversation translator assisting with bilingual dialogue.
+export const DEFAULT_PROFILE = {
+  name: 'Default',
+  apiKey: '',
+  model: 'gemini-3.1-flash-lite',
+  endpoint: '',
+  sourceLanguage: '中文',
+  targetLanguage: 'English',
+  contextSize: 12,
+  systemPrompt: `You are a professional real-time conversation translator assisting with bilingual dialogue.
 
 There are two speakers:
 - Speaker 1 (己方/Self): speaks {sourceLanguage}
@@ -13,24 +21,18 @@ Translation rules:
 - Use the conversation history as context for better accuracy (names, topics, tone)
 - If the input is an image, describe and translate any visible text
 - If the input is audio, translate the spoken content — do not output the original transcript
-- Return ONLY the translation — no explanations, no notes, no prefixes`
+- Return ONLY the translation — no explanations, no notes, no prefixes`,
+}
 
 export const useProfileStore = defineStore('profiles', () => {
   const profiles = ref(JSON.parse(localStorage.getItem('translator_profiles') || '[]'))
   const activeProfileId = ref(localStorage.getItem('translator_active_profile') || null)
+  function allocId() {
+    return profiles.value.length === 0 ? 1 : Math.max(...profiles.value.map(p => p.id)) + 1
+  }
 
   if (profiles.value.length === 0) {
-    const def = {
-      id: crypto.randomUUID(),
-      name: 'Default',
-      apiKey: '',
-      model: 'gemini-3.1-flash-lite',
-      endpoint: '',
-      sourceLanguage: '中文',
-      targetLanguage: 'English',
-      contextSize: 12,
-      systemPrompt: DEFAULT_SYSTEM_PROMPT,
-    }
+    const def = { id: allocId(), ...DEFAULT_PROFILE }
     profiles.value.push(def)
     activeProfileId.value = def.id
     persist()
@@ -47,7 +49,7 @@ export const useProfileStore = defineStore('profiles', () => {
   }
 
   function addProfile(data) {
-    const p = { id: crypto.randomUUID(), ...data }
+    const p = { id: allocId(), ...data }
     profiles.value.push(p)
     persist()
     return p

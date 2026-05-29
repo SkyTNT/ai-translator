@@ -7,6 +7,9 @@ export default defineConfig({
     vue(),
     vuetify({ autoImport: true }),
   ],
+  server: {
+    allowedHosts: true,
+  },
   resolve: {
     alias: {
       '@': '/src',

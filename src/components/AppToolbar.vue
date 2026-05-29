@@ -23,10 +23,12 @@
         <!-- Profile switcher -->
         <v-menu v-if="profileStore.profiles.length > 1">
           <template #activator="{ props }">
-            <v-btn v-bind="props" variant="text" size="small" class="text-none">
-              <v-icon start>mdi-account-circle</v-icon>
-              {{ sessionProfile?.name }}
-              <v-icon end>mdi-chevron-down</v-icon>
+            <v-btn v-bind="props" variant="text" size="small" class="text-none" :icon="!smAndUp">
+              <v-icon :start="smAndUp">mdi-account-circle</v-icon>
+              <template v-if="smAndUp">
+                {{ sessionProfile?.name }}
+                <v-icon end>mdi-chevron-down</v-icon>
+              </template>
             </v-btn>
           </template>
           <v-list density="compact" min-width="180">
@@ -55,7 +57,7 @@
           color="primary"
           prepend-icon="mdi-account-circle-outline"
         >
-          {{ sessionProfile.name }}
+          <span v-if="smAndUp">{{ sessionProfile.name }}</span>
         </v-chip>
 
         <!-- API key warning -->
@@ -93,6 +95,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useDisplay } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 import { useProfileStore } from '../stores/profileStore'
 import { useSessionStore } from '../stores/sessionStore'
@@ -101,6 +104,7 @@ import { setLocale, LOCALES } from '../i18n'
 defineEmits(['toggle-sidebar', 'open-profiles'])
 
 const { t, locale } = useI18n()
+const { smAndUp } = useDisplay()
 const profileStore = useProfileStore()
 const sessionStore = useSessionStore()
 
