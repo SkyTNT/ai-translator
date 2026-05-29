@@ -1,5 +1,14 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
+function getModel(profile, { systemInstruction } = {}) {
+  if (!profile.apiKey) throw new Error('请先在Profile中设置API Key')
+  const genAI = new GoogleGenerativeAI(profile.apiKey)
+  const requestOptions = profile.endpoint ? { baseUrl: profile.endpoint } : undefined
+  return genAI.getGenerativeModel({
+    model: profile.model || 'gemini-3.1-flash-lite',
+    ...(systemInstruction && { systemInstruction }),
+  }, requestOptions)
+}
 
 function buildSystemInstruction(profile) {
   const prompt = profile.systemPrompt || ''
@@ -23,13 +32,7 @@ function buildContextText(messages, contextSize) {
 }
 
 export async function translateMessage({ profile, messages, newMessage }) {
-  if (!profile.apiKey) throw new Error('请先在Profile中设置API Key')
-
-  const genAI = new GoogleGenerativeAI(profile.apiKey)
-  const model = genAI.getGenerativeModel({
-    model: profile.model || 'gemini-3.1-flash-lite',
-    systemInstruction: buildSystemInstruction(profile),
-  })
+  const model = getModel(profile, { systemInstruction: buildSystemInstruction(profile) })
 
   const parts = []
   const ctx = buildContextText(messages, profile.contextSize)
@@ -75,15 +78,11 @@ export async function translateMessage({ profile, messages, newMessage }) {
 }
 
 export async function backTranslateMessage({ profile, message }) {
-  if (!profile.apiKey) throw new Error('请先在Profile中设置API Key')
-
   const isSelf = message.role === 'self'
   const fromLang = isSelf ? profile.targetLanguage : profile.sourceLanguage
   const toLang = isSelf ? profile.sourceLanguage : profile.targetLanguage
 
-  const genAI = new GoogleGenerativeAI(profile.apiKey)
-  const model = genAI.getGenerativeModel({ model: profile.model || 'gemini-3.1-flash-lite' })
-
+  const model = getModel(profile)
   const result = await model.generateContent(
     `Translate the following text from ${fromLang} into ${toLang}. Output the translation only:\n\n${message.translation}`
   )

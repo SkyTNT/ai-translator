@@ -25,6 +25,7 @@ export const useProfileStore = defineStore('profiles', () => {
       name: 'Default',
       apiKey: '',
       model: 'gemini-3.1-flash-lite',
+      endpoint: '',
       sourceLanguage: '中文',
       targetLanguage: 'English',
       contextSize: 12,

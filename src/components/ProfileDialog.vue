@@ -108,6 +108,19 @@
                   class="mb-3"
                 />
 
+                <v-text-field
+                  v-model="editingProfile.endpoint"
+                  :label="t('profile.endpoint')"
+                  variant="outlined"
+                  density="compact"
+                  prepend-inner-icon="mdi-server-outline"
+                  :placeholder="t('profile.endpointPlaceholder')"
+                  :hint="t('profile.endpointHint')"
+                  persistent-hint
+                  clearable
+                  class="mb-3"
+                />
+
                 <v-row dense class="mb-3">
                   <v-col cols="6">
                     <v-text-field
@@ -275,6 +288,7 @@ function addNewProfile() {
     name: `Profile ${profileStore.profiles.length + 1}`,
     apiKey: '',
     model: 'gemini-3.1-flash-lite',
+    endpoint: '',
     sourceLanguage: '中文',
     targetLanguage: 'English',
     contextSize: 12,
