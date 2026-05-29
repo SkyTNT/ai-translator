@@ -12,8 +12,8 @@ export const DEFAULT_PROFILE = {
   systemPrompt: `You are a professional real-time conversation translator assisting with bilingual dialogue.
 
 There are two speakers:
-- Speaker 1 (己方/Self): speaks {sourceLanguage}
-- Speaker 2 (对方/Other): speaks {targetLanguage}
+- Speaker 1 (Self): speaks {sourceLanguage}
+- Speaker 2 (Other): speaks {targetLanguage}
 
 Translation rules:
 - If the message is from Speaker 1, translate from {sourceLanguage} to {targetLanguage}
