@@ -24,6 +24,8 @@ export default {
     other: 'Other',
     translating: 'Translating...',
     startPrompt: 'Start translating',
+    fullscreen: 'Fullscreen',
+    showOriginal: 'Original',
     copy: 'Copy translation',
     retranslate: 'Retranslate',
     backTranslate: 'Back-translate',

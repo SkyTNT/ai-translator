@@ -169,6 +169,15 @@
         </v-btn>
 
         <template v-if="message.translation && !message.isTranslating">
+          <!-- Fullscreen -->
+          <v-tooltip :text="t('chat.fullscreen')" location="top">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon variant="text" size="x-small" :color="isSelf ? 'grey-darken-1' : 'grey'" @click="openFullscreen">
+                <v-icon size="12">mdi-fullscreen</v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
+
           <!-- Copy translation -->
           <v-tooltip :text="t('chat.copy')" location="top">
             <template #activator="{ props }">
@@ -223,6 +232,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { openViewerFromSrc } from '../composables/useViewer.js'
+import { openTranslationViewer } from '../composables/useTranslationViewer.js'
 
 const props = defineProps({
   message: { type: Object, required: true },
@@ -287,6 +297,13 @@ async function copyTranslation() {
   try {
     await navigator.clipboard.writeText(props.message.translation)
   } catch {}
+}
+
+function openFullscreen() {
+  openTranslationViewer({
+    translation: props.message.translation,
+    originalText: props.message.originalText,
+  })
 }
 </script>
 

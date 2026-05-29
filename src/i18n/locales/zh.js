@@ -24,6 +24,8 @@ export default {
     other: '对方',
     translating: '翻译中...',
     startPrompt: '开始翻译对话',
+    fullscreen: '全屏展示译文',
+    showOriginal: '原文',
     copy: '复制译文',
     retranslate: '重新翻译',
     backTranslate: '回译',

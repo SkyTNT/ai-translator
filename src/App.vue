@@ -36,6 +36,7 @@
 
     <ProfileDialog v-model="profileDialogOpen" />
     <ImageViewer />
+    <TranslationViewer />
   </v-app>
 </template>
 
@@ -50,6 +51,7 @@ import SessionSidebar from './components/SessionSidebar.vue'
 import ChatArea from './components/ChatArea.vue'
 import ProfileDialog from './components/ProfileDialog.vue'
 import ImageViewer from './components/ImageViewer.vue'
+import TranslationViewer from './components/TranslationViewer.vue'
 
 const { t } = useI18n()
 const profileStore = useProfileStore()
