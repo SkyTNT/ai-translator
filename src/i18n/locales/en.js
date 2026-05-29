@@ -59,7 +59,7 @@ export default {
     contextSize: 'Context messages',
     contextSizeHint: 'Number of recent messages sent as context for each translation',
     systemPrompt: 'System Prompt',
-    systemPromptHint: '{sourceLanguage} and {targetLanguage} are replaced with the language settings above',
+    systemPromptHint: "{'{'}sourceLanguage{'}'} and {'{'}targetLanguage{'}'} are replaced with the language settings above",
     resetPrompt: 'Reset to default',
     save: 'Save',
     use: 'Use this profile',

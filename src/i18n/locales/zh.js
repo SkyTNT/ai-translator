@@ -59,7 +59,7 @@ export default {
     contextSize: '上下文消息数',
     contextSizeHint: '每次翻译携带的最近消息条数',
     systemPrompt: 'System Prompt（翻译指令）',
-    systemPromptHint: '{sourceLanguage} 和 {targetLanguage} 会被自动替换为上方语言设置',
+    systemPromptHint: "{'{'}sourceLanguage{'}'} 和 {'{'}targetLanguage{'}'} 会被自动替换为上方语言设置",
     resetPrompt: '重置为默认',
     save: '保存',
     use: '使用此 Profile',
