@@ -5,15 +5,16 @@
     <v-app-bar-title>
       <div class="d-flex align-center gap-2">
         <v-icon color="primary" class="mr-1">mdi-translate</v-icon>
-        <span class="font-weight-bold">{{ t('app.title') }}</span>
+        <span v-if="smAndUp || !activeSession" class="font-weight-bold">{{ t('app.title') }}</span>
         <v-chip
           v-if="activeSession"
           size="small"
           variant="tonal"
           color="primary"
-          class="ml-2"
+          :class="smAndUp ? 'ml-2' : ''"
+          style="max-width: 160px"
         >
-          {{ activeSession.name }}
+          <span class="text-truncate">{{ activeSession.name }}</span>
         </v-chip>
       </div>
     </v-app-bar-title>
