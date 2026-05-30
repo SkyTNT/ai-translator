@@ -101,7 +101,7 @@
         <!-- Original text -->
         <div
           v-if="message.originalText"
-          :class="['text-body-2', isSelf ? 'text-on-primary' : 'text-high-emphasis']"
+          :class="['text-body-2', isSelf ? 'text-on-primary' : 'text-on-surface-variant']"
           style="white-space: pre-wrap; word-break: break-word;"
         >
           {{ message.originalText }}
@@ -117,13 +117,13 @@
         <!-- Translation -->
         <div v-if="message.isTranslating" class="d-flex align-center gap-1">
           <v-progress-circular size="14" width="2" indeterminate :color="isSelf ? 'on-primary' : 'primary'" />
-          <span :class="['text-caption', isSelf ? 'text-on-primary opacity-70' : 'text-medium-emphasis']">
+          <span :class="['text-caption', isSelf ? 'text-on-primary opacity-70' : 'text-on-surface-variant opacity-70']">
             {{ t('chat.translating') }}
           </span>
         </div>
         <div
           v-else-if="message.translation"
-          :class="['text-body-2', isSelf ? 'text-on-primary opacity-80' : 'text-medium-emphasis']"
+          :class="['text-body-2', isSelf ? 'text-on-primary opacity-80' : 'text-on-surface-variant opacity-80']"
           style="white-space: pre-wrap; word-break: break-word; font-style: italic;"
         >
           {{ message.translation }}
@@ -134,19 +134,19 @@
           <v-divider :color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.2)' : 'rgba(var(--v-theme-on-surface), 0.08)'" class="my-2" />
           <div class="d-flex align-center gap-1 mb-1">
             <v-icon size="12" :color="isSelf ? 'on-primary' : 'on-surface-variant'">mdi-rotate-left</v-icon>
-            <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-disabled']">
+            <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-on-surface-variant opacity-60']">
               {{ t('chat.backTranslationLabel') }}
             </span>
           </div>
           <div v-if="message.isBackTranslating" class="d-flex align-center gap-1">
             <v-progress-circular size="12" width="2" indeterminate :color="isSelf ? 'on-primary' : 'primary'" />
-            <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-medium-emphasis']">
+            <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-on-surface-variant opacity-60']">
               {{ t('chat.backTranslating') }}
             </span>
           </div>
           <div
             v-else-if="message.backTranslation"
-            :class="['text-body-2', isSelf ? 'text-on-primary opacity-60' : 'text-disabled']"
+            :class="['text-body-2', isSelf ? 'text-on-primary opacity-60' : 'text-on-surface-variant opacity-50']"
             style="white-space: pre-wrap; word-break: break-word; font-style: italic;"
           >
             {{ message.backTranslation }}
