@@ -277,7 +277,7 @@
           <v-icon size="16">mdi-trash-can-outline</v-icon>
         </v-btn>
 
-        <template v-if="message.translation && !message.isTranslating && !editingTranslation">
+        <template v-if="message.translation && !message.isTranslating">
           <!-- Fullscreen -->
           <v-tooltip :text="t('chat.fullscreen')" location="top">
             <template #activator="{ props }">
@@ -435,6 +435,10 @@ const editingText = ref('')
 const translationTextarea = ref(null)
 
 function startEditTranslation() {
+  if (editingTranslation.value) {
+    confirmEditTranslation()
+    return
+  }
   editingText.value = props.message.translation
   editingTranslation.value = true
   nextTick(() => translationTextarea.value?.focus())
