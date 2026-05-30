@@ -152,6 +152,55 @@
             {{ message.backTranslation }}
           </div>
         </template>
+
+        <!-- TTS player -->
+        <template v-if="message.ttsAudio">
+          <v-divider :color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.2)' : 'rgba(var(--v-theme-on-surface), 0.08)'" class="my-2" />
+          <div class="d-flex align-center gap-1 mb-1">
+            <v-icon size="12" :color="isSelf ? 'on-primary' : 'on-surface-variant'">mdi-volume-high</v-icon>
+            <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-on-surface-variant opacity-60']">
+              {{ t('chat.ttsLabel') }}
+            </span>
+          </div>
+          <div class="d-flex align-center gap-2 px-2 py-1 rounded-pill" :style="audioTrackStyle">
+            <v-btn
+              :icon="ttsPlaying ? 'mdi-pause' : 'mdi-play'"
+              :color="isSelf ? 'on-primary' : 'primary'"
+              variant="text"
+              size="small"
+              density="comfortable"
+              style="position: relative; z-index: 1; flex-shrink: 0;"
+              @click="toggleTTSPlay"
+            />
+            <v-slider
+              v-model="ttsCurrentTime"
+              :max="ttsDuration || 1"
+              density="compact"
+              :color="isSelf ? 'on-primary' : 'primary'"
+              :track-color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.35)' : 'primary-lighten-3'"
+              hide-details
+              thumb-size="10"
+              class="flex-grow-1"
+              style="min-width: 80px;"
+              @update:model-value="seekTTS"
+            />
+            <span
+              class="text-caption"
+              :class="isSelf ? 'text-on-primary' : 'text-primary'"
+              style="white-space: nowrap; min-width: 68px; text-align: right;"
+            >
+              {{ fmtTime(ttsCurrentTime) }} / {{ fmtTime(ttsDuration) }}
+            </span>
+          </div>
+          <audio
+            ref="ttsEl"
+            :src="message.ttsAudio"
+            style="display: none;"
+            @timeupdate="ttsCurrentTime = ttsEl.currentTime"
+            @ended="ttsPlaying = false"
+            @loadedmetadata="ttsDuration = ttsEl.duration"
+          />
+        </template>
       </v-card>
 
       <!-- Error chip -->
@@ -227,6 +276,18 @@
               </v-btn>
             </template>
           </v-tooltip>
+
+          <!-- TTS -->
+          <v-tooltip v-if="ttsAvailable" :text="t('chat.tts')" location="top">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;"
+                :loading="ttsLoading"
+                @click="generateTTS"
+              >
+                <v-icon size="16">mdi-volume-high</v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
         </template>
 
         <span class="text-caption text-medium-emphasis">
@@ -250,10 +311,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { openViewerFromSrc } from '../composables/useViewer.js'
 import { openTranslationViewer } from '../composables/useTranslationViewer.js'
+import { useProfileStore } from '../stores/profileStore.js'
+import { useSessionStore } from '../stores/sessionStore.js'
+import { textToSpeech, registerTTSStop, unregisterTTSStop } from '../services/fishAudioService.js'
 
 const props = defineProps({
   message: { type: Object, required: true },
@@ -262,6 +326,8 @@ const emit = defineEmits(['delete', 'retranslate', 'back-translate'])
 
 
 const { t, locale } = useI18n()
+const profileStore = useProfileStore()
+const sessionStore = useSessionStore()
 const isSelf = computed(() => props.message.role === 'self')
 
 // Image layout
@@ -313,6 +379,82 @@ async function copyTranslation() {
     await navigator.clipboard.writeText(props.message.translation)
   } catch {}
 }
+
+// TTS player
+const ttsEl = ref(null)
+const ttsPlaying = ref(false)
+const ttsCurrentTime = ref(0)
+const ttsDuration = ref(0)
+const ttsProfile = computed(() => {
+  const session = sessionStore.activeSession
+  if (!session) return profileStore.activeProfile
+  return profileStore.profiles.find(p => p.id === session.profileId) || profileStore.activeProfile
+})
+const ttsAvailable = computed(() => !!ttsProfile.value?.fishAudioApiKey)
+const ttsLoading = ref(false)
+
+
+function stopTTS() {
+  if (ttsEl.value) {
+    ttsEl.value.pause()
+    ttsPlaying.value = false
+  }
+  unregisterTTSStop(stopTTS)
+}
+
+function toggleTTSPlay() {
+  if (!ttsEl.value) return
+  if (ttsPlaying.value) {
+    ttsEl.value.pause()
+    ttsPlaying.value = false
+    unregisterTTSStop(stopTTS)
+  } else {
+    registerTTSStop(stopTTS)
+    ttsEl.value.play()
+    ttsPlaying.value = true
+  }
+}
+
+function seekTTS(val) {
+  if (ttsEl.value) ttsEl.value.currentTime = val
+}
+
+async function generateTTS() {
+  const profile = ttsProfile.value
+  if (!profile?.fishAudioApiKey) return
+
+  ttsLoading.value = true
+  if (ttsEl.value) {
+    ttsEl.value.pause()
+    ttsPlaying.value = false
+  }
+
+  try {
+    const dataUrl = await textToSpeech({
+      text: props.message.translation,
+      apiKey: profile.fishAudioApiKey,
+      referenceId: isSelf.value ? profile.fishAudioSelfReferenceId : profile.fishAudioOtherReferenceId,
+      endpoint: profile.fishAudioEndpoint,
+    })
+
+    sessionStore.updateMessage(sessionStore.activeSessionId, props.message.id, { ttsAudio: dataUrl })
+    ttsCurrentTime.value = 0
+    ttsDuration.value = 0
+
+    await nextTick()
+    if (ttsEl.value) {
+      registerTTSStop(stopTTS)
+      ttsEl.value.play()
+      ttsPlaying.value = true
+    }
+  } catch (err) {
+    console.error('TTS error:', err)
+  } finally {
+    ttsLoading.value = false
+  }
+}
+
+onUnmounted(() => stopTTS())
 
 function openFullscreen() {
   openTranslationViewer({

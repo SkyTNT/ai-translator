@@ -27,6 +27,10 @@ Output the complete {toLang} translation only.`,
   backTranslateInstruction: `Translate the following text from {fromLang} into {toLang}. Output the translation only:\n\n{text}`,
   contextMessageFormat: `{role}: {original}\nTranslation: {translation}`,
   contextHeader: `Conversation history for context:\n\n{context}\n\n---\n\n`,
+  fishAudioEndpoint: '',
+  fishAudioApiKey: '',
+  fishAudioSelfReferenceId: '',
+  fishAudioOtherReferenceId: '',
 }
 
 export const useProfileStore = defineStore('profiles', () => {

@@ -83,6 +83,13 @@
                   <v-text-field v-model="editingProfile.apiKey" :label="t('profile.apiKey')" variant="outlined" density="compact" :type="showApiKey ? 'text' : 'password'" prepend-inner-icon="mdi-key-outline" :append-inner-icon="showApiKey ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="showApiKey = !showApiKey" class="mb-3" :hint="t('profile.apiKeyHint')" persistent-hint />
                   <v-text-field v-model="editingProfile.model" :label="t('profile.model')" variant="outlined" density="compact" prepend-inner-icon="mdi-robot-outline" :placeholder="t('profile.modelPlaceholder')" class="mb-3" />
                   <v-text-field v-model="editingProfile.endpoint" :label="t('profile.endpoint')" variant="outlined" density="compact" prepend-inner-icon="mdi-server-outline" :placeholder="t('profile.endpointPlaceholder')" :hint="t('profile.endpointHint')" persistent-hint clearable class="mb-3" />
+                  <v-divider class="mb-3" />
+                  <div class="text-caption text-medium-emphasis mb-3">{{ t('profile.fishAudioSection') }}</div>
+                  <v-text-field v-model="editingProfile.fishAudioEndpoint" :label="t('profile.fishAudioEndpoint')" variant="outlined" density="compact" prepend-inner-icon="mdi-server-outline" :placeholder="t('profile.fishAudioEndpointPlaceholder')" :hint="t('profile.fishAudioEndpointHint')" persistent-hint clearable class="mb-3" />
+                  <v-text-field v-model="editingProfile.fishAudioApiKey" :label="t('profile.fishAudioApiKey')" variant="outlined" density="compact" :type="showFishAudioKey ? 'text' : 'password'" prepend-inner-icon="mdi-account-voice" :append-inner-icon="showFishAudioKey ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="showFishAudioKey = !showFishAudioKey" class="mb-3" :hint="t('profile.fishAudioApiKeyHint')" persistent-hint />
+                  <v-text-field v-model="editingProfile.fishAudioSelfReferenceId" :label="t('profile.fishAudioSelfReferenceId')" variant="outlined" density="compact" prepend-inner-icon="mdi-microphone-outline" class="mb-3" :hint="t('profile.fishAudioSelfReferenceIdHint')" persistent-hint clearable />
+                  <v-text-field v-model="editingProfile.fishAudioOtherReferenceId" :label="t('profile.fishAudioOtherReferenceId')" variant="outlined" density="compact" prepend-inner-icon="mdi-microphone-outline" class="mb-3" :hint="t('profile.fishAudioOtherReferenceIdHint')" persistent-hint clearable />
+                  <v-divider class="mb-3" />
                   <v-row dense class="mb-3">
                     <v-col cols="6"><v-text-field v-model="editingProfile.sourceLanguage" :label="t('profile.sourceLang')" variant="outlined" density="compact" prepend-inner-icon="mdi-translate" :placeholder="t('profile.sourceLangPlaceholder')" /></v-col>
                     <v-col cols="6"><v-text-field v-model="editingProfile.targetLanguage" :label="t('profile.targetLang')" variant="outlined" density="compact" prepend-inner-icon="mdi-translate" :placeholder="t('profile.targetLangPlaceholder')" /></v-col>
@@ -132,6 +139,13 @@
               <v-text-field v-model="editingProfile.apiKey" :label="t('profile.apiKey')" variant="outlined" density="compact" :type="showApiKey ? 'text' : 'password'" prepend-inner-icon="mdi-key-outline" :append-inner-icon="showApiKey ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="showApiKey = !showApiKey" class="mb-3" :hint="t('profile.apiKeyHint')" persistent-hint />
               <v-text-field v-model="editingProfile.model" :label="t('profile.model')" variant="outlined" density="compact" prepend-inner-icon="mdi-robot-outline" :placeholder="t('profile.modelPlaceholder')" class="mb-3" />
               <v-text-field v-model="editingProfile.endpoint" :label="t('profile.endpoint')" variant="outlined" density="compact" prepend-inner-icon="mdi-server-outline" :placeholder="t('profile.endpointPlaceholder')" :hint="t('profile.endpointHint')" persistent-hint clearable class="mb-3" />
+              <v-divider class="mb-3" />
+              <div class="text-caption text-medium-emphasis mb-3">{{ t('profile.fishAudioSection') }}</div>
+              <v-text-field v-model="editingProfile.fishAudioEndpoint" :label="t('profile.fishAudioEndpoint')" variant="outlined" density="compact" prepend-inner-icon="mdi-server-outline" :placeholder="t('profile.fishAudioEndpointPlaceholder')" :hint="t('profile.fishAudioEndpointHint')" persistent-hint clearable class="mb-3" />
+              <v-text-field v-model="editingProfile.fishAudioApiKey" :label="t('profile.fishAudioApiKey')" variant="outlined" density="compact" :type="showFishAudioKey ? 'text' : 'password'" prepend-inner-icon="mdi-account-voice" :append-inner-icon="showFishAudioKey ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="showFishAudioKey = !showFishAudioKey" class="mb-3" :hint="t('profile.fishAudioApiKeyHint')" persistent-hint />
+              <v-text-field v-model="editingProfile.fishAudioSelfReferenceId" :label="t('profile.fishAudioSelfReferenceId')" variant="outlined" density="compact" prepend-inner-icon="mdi-microphone-outline" class="mb-3" :hint="t('profile.fishAudioSelfReferenceIdHint')" persistent-hint clearable />
+              <v-text-field v-model="editingProfile.fishAudioOtherReferenceId" :label="t('profile.fishAudioOtherReferenceId')" variant="outlined" density="compact" prepend-inner-icon="mdi-microphone-outline" class="mb-3" :hint="t('profile.fishAudioOtherReferenceIdHint')" persistent-hint clearable />
+              <v-divider class="mb-3" />
               <v-row dense class="mb-3">
                 <v-col cols="6"><v-text-field v-model="editingProfile.sourceLanguage" :label="t('profile.sourceLang')" variant="outlined" density="compact" prepend-inner-icon="mdi-translate" :placeholder="t('profile.sourceLangPlaceholder')" /></v-col>
                 <v-col cols="6"><v-text-field v-model="editingProfile.targetLanguage" :label="t('profile.targetLang')" variant="outlined" density="compact" prepend-inner-icon="mdi-translate" :placeholder="t('profile.targetLangPlaceholder')" /></v-col>
@@ -242,6 +256,7 @@ const profileStore = useProfileStore()
 const selectedId = ref(profileStore.activeProfileId)
 const editingProfile = ref(null)
 const showApiKey = ref(false)
+const showFishAudioKey = ref(false)
 const saving = ref(false)
 const deleteDialog = ref(false)
 const deleteTargetId = ref(null)
