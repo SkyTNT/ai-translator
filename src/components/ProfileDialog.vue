@@ -53,6 +53,7 @@
                         <v-btn v-bind="menuProps" icon="mdi-dots-vertical" variant="text" size="x-small" @click.stop />
                       </template>
                       <v-list density="compact" min-width="140">
+                        <v-list-item prepend-icon="mdi-download-outline" :title="t('profile.export')" @click="exportProfile(p)" />
                         <v-list-item prepend-icon="mdi-content-copy" :title="t('profile.copy')" @click="duplicateProfile(p)" />
                         <v-list-item
                           v-if="profileStore.profiles.length > 1"
@@ -66,9 +67,12 @@
                   </template>
                 </v-list-item>
               </v-list>
-              <div class="pa-2">
+              <div class="pa-2 d-flex flex-column gap-1">
                 <v-btn block variant="outlined" size="small" prepend-icon="mdi-plus" @click="addNewProfile">
                   {{ t('profile.new') }}
+                </v-btn>
+                <v-btn block variant="outlined" size="small" prepend-icon="mdi-upload-outline" @click="triggerImport">
+                  {{ t('profile.import') }}
                 </v-btn>
               </div>
             </template>
@@ -208,6 +212,7 @@
                         <v-btn v-bind="menuProps" icon="mdi-dots-vertical" variant="text" size="x-small" @click.stop />
                       </template>
                       <v-list density="compact" min-width="140">
+                        <v-list-item prepend-icon="mdi-download-outline" :title="t('profile.export')" @click="exportProfile(p)" />
                         <v-list-item prepend-icon="mdi-content-copy" :title="t('profile.copy')" @click="duplicateProfile(p)" />
                         <v-list-item v-if="profileStore.profiles.length > 1" prepend-icon="mdi-trash-can-outline" :title="t('profile.delete')" class="text-error" @click="confirmDelete(p.id)" />
                       </v-list>
@@ -216,15 +221,20 @@
                 </template>
               </v-list-item>
             </v-list>
-            <div class="pa-3">
+            <div class="pa-3 d-flex flex-column gap-2">
               <v-btn block variant="outlined" prepend-icon="mdi-plus" @click="addNewProfile">
                 {{ t('profile.new') }}
+              </v-btn>
+              <v-btn block variant="outlined" prepend-icon="mdi-upload-outline" @click="triggerImport">
+                {{ t('profile.import') }}
               </v-btn>
             </div>
           </template>
         </template>
       </v-card-text>
     </v-card>
+
+    <input ref="fileInput" type="file" accept=".json,application/json" class="d-none" @change="onImportFile" />
 
     <v-dialog v-model="deleteDialog" max-width="360">
       <v-card rounded="xl">
@@ -260,6 +270,7 @@ const showFishAudioKey = ref(false)
 const saving = ref(false)
 const deleteDialog = ref(false)
 const deleteTargetId = ref(null)
+const fileInput = ref(null)
 
 watch(
   () => props.modelValue,
@@ -356,6 +367,44 @@ function resetContextHeader() {
   if (editingProfile.value) {
     editingProfile.value.contextHeader = DEFAULT_PROFILE.contextHeader
   }
+}
+
+function exportProfile(p) {
+  const { id, ...data } = p
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${p.name}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+function triggerImport() {
+  fileInput.value?.click()
+}
+
+function onImportFile(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    try {
+      let data = JSON.parse(e.target.result)
+      if (!Array.isArray(data)) data = [data]
+      let lastProfile = null
+      for (const item of data) {
+        if (typeof item !== 'object' || item === null) continue
+        const { id: _id, ...rest } = item
+        lastProfile = profileStore.addProfile({ ...DEFAULT_PROFILE, ...rest })
+      }
+      if (lastProfile) loadProfile(lastProfile.id)
+    } catch {
+      // ignore invalid file
+    }
+  }
+  reader.readAsText(file)
+  event.target.value = ''
 }
 
 function close() {
