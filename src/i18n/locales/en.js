@@ -7,6 +7,7 @@ export default {
   },
   toolbar: {
     apiKeyMissing: 'API Key not set',
+    language: 'Language',
   },
   session: {
     list: 'Sessions',
@@ -78,6 +79,14 @@ export default {
     deleteConfirm: 'Are you sure you want to delete this profile? This cannot be undone.',
     cancel: 'Cancel',
     selectOrCreate: 'Select or create a profile',
+  },
+  appearance: {
+    title: 'Appearance',
+    theme: 'Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeSystem: 'System',
+    primaryColor: 'Accent color',
   },
   error: {
     translationFailed: 'Translation failed',

@@ -7,6 +7,7 @@ export default {
   },
   toolbar: {
     apiKeyMissing: 'API Key 未设置',
+    language: '界面语言',
   },
   session: {
     list: '会话列表',
@@ -78,6 +79,14 @@ export default {
     deleteConfirm: '确定要删除此 Profile 吗？此操作不可撤销。',
     cancel: '取消',
     selectOrCreate: '选择或创建 Profile',
+  },
+  appearance: {
+    title: '外观设置',
+    theme: '主题',
+    themeLight: '浅色',
+    themeDark: '深色',
+    themeSystem: '跟随系统',
+    primaryColor: '主题色',
   },
   error: {
     translationFailed: '翻译失败',

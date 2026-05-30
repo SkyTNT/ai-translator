@@ -3,6 +3,7 @@
     <AppToolbar
       @toggle-sidebar="sidebarOpen = !sidebarOpen"
       @open-profiles="profileDialogOpen = true"
+      @open-appearance="appearanceDialogOpen = true"
     />
 
     <SessionSidebar v-model="sidebarOpen" />
@@ -39,34 +40,45 @@
     </v-footer>
 
     <ProfileDialog v-model="profileDialogOpen" />
+    <AppearanceDialog v-model="appearanceDialogOpen" />
     <ImageViewer />
     <TranslationViewer />
   </v-app>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useDisplay } from 'vuetify'
+import { ref, computed, watch } from 'vue'
+import { useDisplay, useTheme } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 import { useProfileStore } from './stores/profileStore'
 import { useSessionStore } from './stores/sessionStore'
+import { useSettingsStore } from './stores/settingsStore'
 import { translateMessage } from './services/geminiService'
 import AppToolbar from './components/AppToolbar.vue'
 import SessionSidebar from './components/SessionSidebar.vue'
 import ChatArea from './components/ChatArea.vue'
 import MessageInput from './components/MessageInput.vue'
 import ProfileDialog from './components/ProfileDialog.vue'
+import AppearanceDialog from './components/AppearanceDialog.vue'
 import ImageViewer from './components/ImageViewer.vue'
 import TranslationViewer from './components/TranslationViewer.vue'
 
 const { t } = useI18n()
 const profileStore = useProfileStore()
 const sessionStore = useSessionStore()
+const settingsStore = useSettingsStore()
+const vuetifyTheme = useTheme()
 
 const { mdAndUp } = useDisplay()
 const sidebarOpen = ref(mdAndUp.value)
 const profileDialogOpen = ref(false)
-const theme = ref('light')
+const appearanceDialogOpen = ref(false)
+const theme = computed(() => settingsStore.effectiveTheme)
+
+watch(() => settingsStore.primaryColor, (color) => {
+  vuetifyTheme.themes.value.light.colors.primary = color
+  vuetifyTheme.themes.value.dark.colors.primary = color
+}, { immediate: true })
 
 function newSession() {
   const name = `${t('session.defaultName')} ${sessionStore.sessions.length + 1}`

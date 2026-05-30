@@ -25,7 +25,7 @@
 
       <!-- Bubble -->
       <v-card
-        :color="isSelf ? 'primary' : 'grey-lighten-4'"
+        :color="isSelf ? 'primary' : 'surface-variant'"
         :class="['pa-3 rounded-xl', isSelf ? 'rounded-tr-sm' : 'rounded-tl-sm']"
         elevation="0"
       >
