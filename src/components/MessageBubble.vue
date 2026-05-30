@@ -121,13 +121,34 @@
             {{ t('chat.translating') }}
           </span>
         </div>
-        <div
-          v-else-if="message.translation"
-          :class="['text-body-2', isSelf ? 'text-on-primary opacity-80' : 'text-on-surface-variant opacity-80']"
-          style="white-space: pre-wrap; word-break: break-word; font-style: italic;"
-        >
-          {{ message.translation }}
-        </div>
+        <template v-else-if="message.translation">
+          <v-textarea
+            v-if="editingTranslation"
+            ref="translationTextarea"
+            v-model="editingText"
+            variant="plain"
+            density="compact"
+            hide-details
+            auto-grow
+            rows="1"
+            :color="isSelf ? 'on-primary' : 'primary'"
+            :class="['text-body-2', isSelf ? 'text-on-primary opacity-80' : 'text-on-surface-variant opacity-80']"
+            style="font-style: italic; padding: 0; margin: 0;"
+            @keydown.ctrl.enter.prevent="confirmEditTranslation"
+            @keydown.escape.prevent="cancelEditTranslation"
+          />
+          <div
+            v-else
+            :class="['text-body-2', isSelf ? 'text-on-primary opacity-80' : 'text-on-surface-variant opacity-80']"
+            style="white-space: pre-wrap; word-break: break-word; font-style: italic;"
+          >
+            {{ message.translation }}
+          </div>
+          <div v-if="editingTranslation" class="d-flex justify-end gap-1 mt-1">
+            <v-btn icon="mdi-close" size="x-small" variant="text" :color="isSelf ? 'on-primary' : 'on-surface-variant'" density="compact" @click="cancelEditTranslation" />
+            <v-btn icon="mdi-check" size="x-small" variant="text" :color="isSelf ? 'on-primary' : 'primary'" density="compact" @click="confirmEditTranslation" />
+          </div>
+        </template>
 
         <!-- Back-translation -->
         <template v-if="message.backTranslation || message.isBackTranslating">
@@ -256,12 +277,21 @@
           <v-icon size="16">mdi-trash-can-outline</v-icon>
         </v-btn>
 
-        <template v-if="message.translation && !message.isTranslating">
+        <template v-if="message.translation && !message.isTranslating && !editingTranslation">
           <!-- Fullscreen -->
           <v-tooltip :text="t('chat.fullscreen')" location="top">
             <template #activator="{ props }">
               <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="openFullscreen">
                 <v-icon size="16">mdi-fullscreen</v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
+
+          <!-- Edit translation -->
+          <v-tooltip :text="t('chat.editTranslation')" location="top">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="startEditTranslation">
+                <v-icon size="16">mdi-pencil-outline</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -397,6 +427,28 @@ async function copyTranslation() {
   try {
     await navigator.clipboard.writeText(props.message.translation)
   } catch {}
+}
+
+// Translation editing
+const editingTranslation = ref(false)
+const editingText = ref('')
+const translationTextarea = ref(null)
+
+function startEditTranslation() {
+  editingText.value = props.message.translation
+  editingTranslation.value = true
+  nextTick(() => translationTextarea.value?.focus())
+}
+
+function confirmEditTranslation() {
+  if (editingText.value.trim()) {
+    sessionStore.updateMessage(sessionStore.activeSessionId, props.message.id, { translation: editingText.value })
+  }
+  editingTranslation.value = false
+}
+
+function cancelEditTranslation() {
+  editingTranslation.value = false
 }
 
 // TTS player

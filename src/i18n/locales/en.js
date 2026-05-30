@@ -34,6 +34,7 @@ export default {
     backTranslationLabel: 'Back-translation',
     tts: 'Read aloud',
     ttsLabel: 'TTS',
+    editTranslation: 'Edit translation',
     selfLang: 'Self ({lang})',
     otherLang: 'Other ({lang})',
   },

@@ -34,6 +34,7 @@ export default {
     backTranslationLabel: '回译结果',
     tts: '朗读',
     ttsLabel: '语音合成',
+    editTranslation: '编辑译文',
     selfLang: '己方（{lang}）',
     otherLang: '对方（{lang}）',
   },
