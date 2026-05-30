@@ -5,7 +5,7 @@
     max-width="340"
     scrollable
   >
-    <v-card>
+    <v-card rounded="xl">
       <v-card-title class="d-flex align-center pa-4">
         <v-icon class="mr-2" color="primary">mdi-palette</v-icon>
         {{ t('appearance.title') }}
@@ -26,7 +26,7 @@
           color="primary"
           density="comfortable"
           class="mb-5"
-          rounded="lg"
+          rounded="pill"
         >
           <v-btn value="light" prepend-icon="mdi-white-balance-sunny">
             {{ t('appearance.themeLight') }}

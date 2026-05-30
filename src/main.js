@@ -20,14 +20,16 @@ const vuetify = createVuetify({
         colors: {
           primary: '#1976D2',
           secondary: '#424242',
-          self: '#1976D2',
-          other: '#616161',
+          'surface-container': '#ECF0F4',
+          'surface-container-low': '#F5F7F9',
         },
       },
       dark: {
         colors: {
           primary: '#2196F3',
           secondary: '#757575',
+          'surface-container': '#1E2227',
+          'surface-container-low': '#161A1E',
         },
       },
     },

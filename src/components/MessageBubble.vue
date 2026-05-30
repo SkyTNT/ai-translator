@@ -8,10 +8,10 @@
     <v-avatar
       v-if="!isSelf"
       size="32"
-      color="grey-lighten-2"
+      color="surface-variant"
       class="mr-2 mt-1 flex-shrink-0"
     >
-      <v-icon size="18" color="grey-darken-1">mdi-account</v-icon>
+      <v-icon size="18" color="on-surface-variant">mdi-account</v-icon>
     </v-avatar>
 
     <div style="max-width: 70%; min-width: 120px;">
@@ -38,7 +38,7 @@
               rounded="lg"
               elevation="0"
               class="overflow-hidden cursor-pointer flex-shrink-0"
-              :style="imageCardStyle"
+              style="border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));"
               @click="openViewerFromSrc(img.url)"
             >
               <v-img :src="img.url" cover :width="imgSize" :height="imgSize" />
@@ -54,7 +54,7 @@
           >
             <v-btn
               :icon="audioPlaying ? 'mdi-pause' : 'mdi-play'"
-              :color="isSelf ? 'white' : 'primary'"
+              :color="isSelf ? 'on-primary' : 'primary'"
               variant="text"
               size="small"
               density="comfortable"
@@ -65,8 +65,8 @@
               v-model="audioCurrentTime"
               :max="audioDuration || 1"
               density="compact"
-              :color="isSelf ? 'white' : 'primary'"
-              :track-color="isSelf ? 'rgba(255,255,255,0.35)' : 'primary-lighten-3'"
+              :color="isSelf ? 'on-primary' : 'primary'"
+              :track-color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.35)' : 'primary-lighten-3'"
               hide-details
               thumb-size="10"
               class="flex-grow-1"
@@ -75,7 +75,7 @@
             />
             <span
               class="text-caption"
-              :class="isSelf ? 'text-white' : 'text-primary'"
+              :class="isSelf ? 'text-on-primary' : 'text-primary'"
               style="white-space: nowrap; min-width: 68px; text-align: right;"
             >
               {{ fmtTime(audioCurrentTime) }} / {{ fmtTime(audioDuration) }}
@@ -94,14 +94,14 @@
         <!-- Separator between media and text -->
         <v-divider
           v-if="(message.images?.length || message.audio) && message.originalText"
-          :color="isSelf ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.08)'"
+          :color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.2)' : 'rgba(var(--v-theme-on-surface), 0.08)'"
           class="mb-2"
         />
 
         <!-- Original text -->
         <div
           v-if="message.originalText"
-          :class="['text-body-2', isSelf ? 'text-white' : 'text-high-emphasis']"
+          :class="['text-body-2', isSelf ? 'text-on-primary' : 'text-high-emphasis']"
           style="white-space: pre-wrap; word-break: break-word;"
         >
           {{ message.originalText }}
@@ -110,47 +110,43 @@
         <!-- Divider -->
         <v-divider
           v-if="(message.originalText || message.images?.length || message.audio) && (message.translation || message.isTranslating)"
-          :color="isSelf ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)'"
+          :color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.3)' : 'rgba(var(--v-theme-on-surface), 0.1)'"
           class="my-2"
         />
 
         <!-- Translation -->
         <div v-if="message.isTranslating" class="d-flex align-center gap-1">
-          <v-progress-circular size="14" width="2" indeterminate :color="isSelf ? 'white' : 'primary'" />
-          <span :class="['text-caption', isSelf ? 'text-white opacity-70' : 'text-medium-emphasis']">
+          <v-progress-circular size="14" width="2" indeterminate :color="isSelf ? 'on-primary' : 'primary'" />
+          <span :class="['text-caption', isSelf ? 'text-on-primary opacity-70' : 'text-medium-emphasis']">
             {{ t('chat.translating') }}
           </span>
         </div>
         <div
           v-else-if="message.translation"
-          :class="['text-body-2', isSelf ? 'text-white opacity-80' : 'text-medium-emphasis']"
+          :class="['text-body-2', isSelf ? 'text-on-primary opacity-80' : 'text-medium-emphasis']"
           style="white-space: pre-wrap; word-break: break-word; font-style: italic;"
         >
           {{ message.translation }}
         </div>
-        <div v-else-if="message.error" class="text-caption text-error">
-          <v-icon size="14">mdi-alert-circle</v-icon>
-          {{ message.error }}
-        </div>
 
         <!-- Back-translation -->
         <template v-if="message.backTranslation || message.isBackTranslating">
-          <v-divider :color="isSelf ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.08)'" class="my-2" />
+          <v-divider :color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.2)' : 'rgba(var(--v-theme-on-surface), 0.08)'" class="my-2" />
           <div class="d-flex align-center gap-1 mb-1">
-            <v-icon size="12" :color="isSelf ? 'rgba(255,255,255,0.6)' : 'grey'">mdi-rotate-left</v-icon>
-            <span :class="['text-caption', isSelf ? 'text-white opacity-60' : 'text-disabled']">
+            <v-icon size="12" :color="isSelf ? 'on-primary' : 'on-surface-variant'">mdi-rotate-left</v-icon>
+            <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-disabled']">
               {{ t('chat.backTranslationLabel') }}
             </span>
           </div>
           <div v-if="message.isBackTranslating" class="d-flex align-center gap-1">
-            <v-progress-circular size="12" width="2" indeterminate :color="isSelf ? 'white' : 'primary'" />
-            <span :class="['text-caption', isSelf ? 'text-white opacity-60' : 'text-medium-emphasis']">
+            <v-progress-circular size="12" width="2" indeterminate :color="isSelf ? 'on-primary' : 'primary'" />
+            <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-medium-emphasis']">
               {{ t('chat.backTranslating') }}
             </span>
           </div>
           <div
             v-else-if="message.backTranslation"
-            :class="['text-body-2', isSelf ? 'text-white opacity-60' : 'text-disabled']"
+            :class="['text-body-2', isSelf ? 'text-on-primary opacity-60' : 'text-disabled']"
             style="white-space: pre-wrap; word-break: break-word; font-style: italic;"
           >
             {{ message.backTranslation }}
@@ -158,22 +154,46 @@
         </template>
       </v-card>
 
+      <!-- Error chip -->
+      <div
+        v-if="message.error"
+        class="d-flex align-center gap-1 mt-1"
+        :class="isSelf ? 'justify-end' : 'justify-start'"
+      >
+        <div
+          class="d-flex align-center gap-1 rounded-pill px-3 py-1"
+          style="background: rgba(var(--v-theme-error), 0.12); max-width: 100%;"
+        >
+          <v-icon size="14" style="color: rgb(var(--v-theme-error));">mdi-alert-circle-outline</v-icon>
+          <span class="text-caption" style="color: rgb(var(--v-theme-error)); word-break: break-word;">{{ message.error }}</span>
+          <v-btn
+            icon="mdi-refresh"
+            size="x-small"
+            variant="text"
+            color="error"
+            density="compact"
+            style="min-width: 28px; min-height: 28px;"
+            @click="$emit('retranslate')"
+          />
+        </div>
+      </div>
+
       <!-- Timestamp + actions -->
       <div
         class="d-flex align-center mt-1 gap-1"
         :class="isSelf ? 'justify-end' : 'justify-start'"
       >
         <!-- Delete -->
-        <v-btn icon variant="text" size="x-small" color="error" @click="$emit('delete')">
-          <v-icon size="12">mdi-trash-can-outline</v-icon>
+        <v-btn icon variant="text" size="small" color="error" style="min-width: 40px; min-height: 40px;" @click="$emit('delete')">
+          <v-icon size="16">mdi-trash-can-outline</v-icon>
         </v-btn>
 
         <template v-if="message.translation && !message.isTranslating">
           <!-- Fullscreen -->
           <v-tooltip :text="t('chat.fullscreen')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="x-small" :color="isSelf ? 'grey-darken-1' : 'grey'" @click="openFullscreen">
-                <v-icon size="12">mdi-fullscreen</v-icon>
+              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="openFullscreen">
+                <v-icon size="16">mdi-fullscreen</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -181,8 +201,8 @@
           <!-- Copy translation -->
           <v-tooltip :text="t('chat.copy')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="x-small" :color="isSelf ? 'grey-darken-1' : 'grey'" @click="copyTranslation">
-                <v-icon size="12">mdi-content-copy</v-icon>
+              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="copyTranslation">
+                <v-icon size="16">mdi-content-copy</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -190,8 +210,8 @@
           <!-- Re-translate -->
           <v-tooltip :text="t('chat.retranslate')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="x-small" :color="isSelf ? 'grey-darken-1' : 'grey'" @click="$emit('retranslate')">
-                <v-icon size="12">mdi-refresh</v-icon>
+              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="$emit('retranslate')">
+                <v-icon size="16">mdi-refresh</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -199,11 +219,11 @@
           <!-- Back-translate -->
           <v-tooltip :text="t('chat.backTranslate')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="x-small" :color="isSelf ? 'grey-darken-1' : 'grey'"
+              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;"
                 :loading="message.isBackTranslating"
                 @click="$emit('back-translate')"
               >
-                <v-icon size="12">mdi-rotate-left</v-icon>
+                <v-icon size="16">mdi-rotate-left</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -219,7 +239,8 @@
     <v-avatar
       v-if="isSelf"
       size="32"
-      color="primary-lighten-4"
+      color="primary"
+      variant="tonal"
       class="ml-2 mt-1 flex-shrink-0"
     >
       <v-icon size="18" color="primary">mdi-account-circle</v-icon>
@@ -246,12 +267,6 @@ const isSelf = computed(() => props.message.role === 'self')
 // Image layout
 const imgCount = computed(() => props.message.images?.length || 0)
 const imgSize = computed(() => imgCount.value === 1 ? 200 : 120)
-const imageCardStyle = computed(() => ({
-  border: isSelf.value
-    ? '1px solid rgba(255,255,255,0.2)'
-    : '1px solid rgba(0,0,0,0.08)',
-}))
-
 // Audio player
 const audioEl = ref(null)
 const audioPlaying = ref(false)
@@ -259,9 +274,9 @@ const audioCurrentTime = ref(0)
 const audioDuration = ref(0)
 
 const audioTrackStyle = computed(() => ({
-  background: isSelf.value ? 'rgba(255,255,255,0.15)' : 'rgba(var(--v-theme-primary), 0.08)',
+  background: isSelf.value ? 'rgba(var(--v-theme-on-primary), 0.12)' : 'rgba(var(--v-theme-primary), 0.08)',
   border: isSelf.value
-    ? '1px solid rgba(255,255,255,0.25)'
+    ? '1px solid rgba(var(--v-theme-on-primary), 0.2)'
     : '1px solid rgba(var(--v-theme-primary), 0.2)',
 }))
 

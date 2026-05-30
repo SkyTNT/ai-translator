@@ -19,12 +19,13 @@
           <div class="text-body-1 text-medium-emphasis mb-6" style="white-space: pre-line;">
             {{ t('app.subtitle') }}
           </div>
-          <v-btn color="primary" prepend-icon="mdi-plus" @click="newSession">
+          <v-btn color="primary" rounded="xl" prepend-icon="mdi-plus" @click="newSession">
             {{ t('app.newSession') }}
           </v-btn>
           <v-btn
             v-if="!profileStore.activeProfile?.apiKey"
             variant="outlined"
+            rounded="xl"
             class="mt-3"
             prepend-icon="mdi-cog"
             @click="profileDialogOpen = true"
@@ -35,7 +36,7 @@
       </template>
     </v-main>
 
-    <v-footer v-if="sessionStore.activeSession" app elevation="3" class="pa-0">
+    <v-footer v-if="sessionStore.activeSession" app elevation="0" class="pa-0 border-t">
       <MessageInput @send="handleSend" />
     </v-footer>
 

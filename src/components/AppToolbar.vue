@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar elevation="1" color="surface">
+  <v-app-bar elevation="0" border="b" color="surface">
     <v-app-bar-nav-icon @click="$emit('toggle-sidebar')" />
 
     <v-app-bar-title>
@@ -31,7 +31,7 @@
                 <v-icon end>mdi-chevron-down</v-icon>
               </v-btn>
             </template>
-            <v-list density="compact" min-width="180">
+            <v-list min-width="180">
               <v-list-item
                 v-for="p in profileStore.profiles"
                 :key="p.id"
@@ -43,7 +43,7 @@
               >
                 <template #prepend>
                   <v-icon :color="p.id === activeSession?.profileId ? 'primary' : ''">
-                    mdi-account-circle-outline
+                    {{ p.id === activeSession?.profileId ? 'mdi-account-circle' : 'mdi-account-circle-outline' }}
                   </v-icon>
                 </template>
               </v-list-item>
@@ -76,7 +76,7 @@
                 <v-icon size="18">mdi-translate</v-icon>
               </v-btn>
             </template>
-            <v-list density="compact" min-width="120">
+            <v-list min-width="120">
               <v-list-item
                 v-for="loc in LOCALES"
                 :key="loc.value"
@@ -98,7 +98,7 @@
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
-          <v-list density="compact" min-width="220">
+          <v-list min-width="220">
 
             <!-- Main page -->
             <template v-if="menuPage === 'main'">
@@ -136,7 +136,7 @@
               >
                 <template #prepend>
                   <v-icon :color="p.id === activeSession?.profileId ? 'primary' : ''">
-                    mdi-account-circle-outline
+                    {{ p.id === activeSession?.profileId ? 'mdi-account-circle' : 'mdi-account-circle-outline' }}
                   </v-icon>
                 </template>
               </v-list-item>

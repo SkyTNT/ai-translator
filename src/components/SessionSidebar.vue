@@ -33,7 +33,7 @@
         @click="selectSession(session.id)"
       >
         <template #prepend>
-          <v-icon size="18">mdi-message-text-outline</v-icon>
+          <v-icon size="18">{{ session.id === sessionStore.activeSessionId ? 'mdi-message-text' : 'mdi-message-text-outline' }}</v-icon>
         </template>
 
         <v-list-item-title class="text-body-2">

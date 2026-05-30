@@ -6,7 +6,7 @@
     :fullscreen="!smAndUp"
     scrollable
   >
-    <v-card>
+    <v-card rounded="xl">
       <v-card-title class="d-flex align-center pa-4">
         <v-btn
           v-if="!smAndUp && editingProfile"
@@ -27,7 +27,7 @@
       <v-card-text class="pa-0" :style="smAndUp ? 'min-height:500px' : ''">
         <v-row v-if="smAndUp" no-gutters class="h-100">
           <!-- Sidebar -->
-          <v-col cols="4" style="border-right:1px solid rgba(0,0,0,0.12);">
+          <v-col cols="4" style="border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));">
             <template v-if="smAndUp">
               <v-list density="compact" class="py-2">
                 <v-list-item
@@ -181,7 +181,7 @@
     </v-card>
 
     <v-dialog v-model="deleteDialog" max-width="360">
-      <v-card>
+      <v-card rounded="xl">
         <v-card-title>{{ t('profile.deleteTitle') }}</v-card-title>
         <v-card-text>{{ t('profile.deleteConfirm') }}</v-card-text>
         <v-card-actions>

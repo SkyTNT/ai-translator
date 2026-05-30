@@ -30,9 +30,10 @@
       <v-sheet
         v-if="attachedAudio"
         rounded="pill"
-        color="primary-lighten-5"
+        color="primary"
+        variant="tonal"
         class="d-flex align-center gap-2 pl-1 pr-2 py-1"
-        style="border: 1px solid rgba(var(--v-theme-primary), 0.3); min-width: 220px;"
+        style="min-width: 220px;"
       >
         <v-btn
           :icon="audioPlaying ? 'mdi-pause' : 'mdi-play'"
@@ -103,7 +104,6 @@
             icon="mdi-camera-outline"
             variant="text"
             size="small"
-            color="grey-darken-1"
             @click="cameraInput.click()"
           />
         </template>
@@ -117,7 +117,6 @@
             icon="mdi-image-outline"
             variant="text"
             size="small"
-            color="grey-darken-1"
             @click="imageInput.click()"
           />
         </template>
@@ -129,7 +128,7 @@
           <v-btn
             v-bind="props"
             :icon="isRecording ? 'mdi-stop-circle' : 'mdi-microphone-outline'"
-            :color="isRecording ? 'error' : 'grey-darken-1'"
+            :color="isRecording ? 'error' : undefined"
             variant="text"
             size="small"
             @click="toggleRecording"
@@ -143,7 +142,6 @@
           <v-btn
             v-bind="props"
             icon="mdi-file-music-outline"
-            color="grey-darken-1"
             variant="text"
             size="small"
             @click="audioInput.click()"
@@ -157,6 +155,7 @@
         color="primary"
         icon="mdi-send"
         size="small"
+        rounded="xl"
         @click="send"
       />
     </div>
@@ -386,7 +385,7 @@ function send() {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #f44336;
+  background: rgb(var(--v-theme-error));
   animation: pulse 1s infinite;
 }
 @keyframes pulse {
