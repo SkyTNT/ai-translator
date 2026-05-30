@@ -27,21 +27,17 @@
       </v-card>
 
       <!-- Audio player chip -->
-      <v-sheet
+      <div
         v-if="attachedAudio"
-        rounded="pill"
-        color="primary"
-        variant="tonal"
-        class="d-flex align-center gap-2 pl-1 pr-2 py-1"
-        style="min-width: 220px;"
+        class="d-flex align-center gap-2 px-2 py-1 rounded-pill"
+        style="min-width: 220px; background: rgba(var(--v-theme-primary), 0.08); border: 1px solid rgba(var(--v-theme-primary), 0.2);"
       >
         <v-btn
           :icon="audioPlaying ? 'mdi-pause' : 'mdi-play'"
           color="primary"
-          variant="tonal"
-          size="x-small"
+          variant="text"
+          size="small"
           density="comfortable"
-          rounded="circle"
           style="position: relative; z-index: 1; flex-shrink: 0;"
           @click="toggleAudioPlay"
         />
@@ -53,18 +49,18 @@
           track-color="primary-lighten-3"
           hide-details
           thumb-size="10"
-          class="flex-grow-1 mx-1"
+          class="flex-grow-1"
           style="min-width: 80px;"
           @update:model-value="seekAudio"
         />
-        <span class="text-caption text-primary" style="white-space: nowrap;">
+        <span class="text-caption text-primary" style="white-space: nowrap; min-width: 68px; text-align: right;">
           {{ formatAudioTime(audioCurrentTime) }} / {{ formatAudioTime(audioDurationSecs) }}
         </span>
         <v-btn
           icon="mdi-close"
           variant="text"
           size="x-small"
-          color="grey-darken-1"
+          color="on-surface-variant"
           @click="removeAudio"
         />
         <audio
@@ -75,7 +71,7 @@
           @ended="audioPlaying = false"
           @loadedmetadata="audioDurationSecs = audioPreviewEl.duration"
         />
-      </v-sheet>
+      </div>
     </div>
 
     <!-- Role selector + action buttons row -->
