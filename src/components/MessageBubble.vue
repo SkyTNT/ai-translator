@@ -519,6 +519,7 @@ async function generateTTS() {
     await nextTick()
     if (ttsEl.value) {
       registerTTSStop(stopTTS)
+      ttsEl.value.load()
       ttsEl.value.play()
       ttsPlaying.value = true
     }
