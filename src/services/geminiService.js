@@ -17,17 +17,21 @@ function buildSystemInstruction(profile) {
     .replace(/\{targetLanguage\}/g, profile.targetLanguage || 'target language')
 }
 
-function buildContextText(messages, contextSize) {
+function buildContextText(messages, contextSize, profile) {
   if (!messages || messages.length === 0) return ''
   const recent = messages.slice(-(contextSize ?? 12))
+  const format = profile.contextMessageFormat || ''
   return recent.map(m => {
     const role = m.role === 'self' ? 'Speaker 1' : 'Speaker 2'
     const parts = []
     if (m.originalText) parts.push(m.originalText)
     if (m.images?.length) parts.push(`[${m.images.length} image${m.images.length > 1 ? 's' : ''}]`)
     if (m.audio) parts.push('[audio]')
-    const orig = parts.join(' + ') || '[media]'
-    return `${role}: ${orig}\nTranslation: ${m.translation || ''}`
+    const original = parts.join(' + ') || '[media]'
+    return format
+      .replace(/\{role\}/g, role)
+      .replace(/\{original\}/g, original)
+      .replace(/\{translation\}/g, m.translation || '')
   }).join('\n\n')
 }
 
@@ -35,28 +39,33 @@ export async function translateMessage({ profile, messages, newMessage }) {
   const model = getModel(profile, { systemInstruction: buildSystemInstruction(profile) })
 
   const parts = []
-  const ctx = buildContextText(messages, profile.contextSize)
+  const ctx = buildContextText(messages, profile.contextSize, profile)
   const isSelf = newMessage.role === 'self'
   const fromLang = isSelf ? profile.sourceLanguage : profile.targetLanguage
   const toLang = isSelf ? profile.targetLanguage : profile.sourceLanguage
-  const speakerLabel = isSelf ? `Speaker 1 (${fromLang})` : `Speaker 2 (${fromLang})`
+  const role = isSelf ? 'Speaker 1' : 'Speaker 2'
 
   if (ctx) {
-    parts.push({ text: `Conversation history for context:\n\n${ctx}\n\n---\n\n` })
+    const header = (profile.contextHeader || '').replace(/\{context\}/g, ctx)
+    parts.push({ text: header })
   }
 
   const hasText = !!newMessage.originalText
   const hasImages = !!newMessage.images?.length
   const hasAudio = !!newMessage.audio
 
-  // Build content type description for the instruction
   const contentParts = []
   if (hasText) contentParts.push('text')
   if (hasImages) contentParts.push(`${newMessage.images.length} image${newMessage.images.length > 1 ? 's' : ''}`)
   if (hasAudio) contentParts.push('audio')
   const contentDesc = contentParts.join(' + ')
 
-  parts.push({ text: `Translate the following ${contentDesc} message from ${speakerLabel} from ${fromLang} into ${toLang}.\n` })
+  const instruction = (profile.translateInstruction || '')
+    .replace(/\{contentDesc\}/g, contentDesc)
+    .replace(/\{role\}/g, role)
+    .replace(/\{fromLang\}/g, fromLang)
+    .replace(/\{toLang\}/g, toLang)
+  parts.push({ text: instruction + '\n' })
 
   if (hasImages) {
     for (const img of newMessage.images) {
@@ -71,8 +80,6 @@ export async function translateMessage({ profile, messages, newMessage }) {
     parts.push({ text: `Text: ${newMessage.originalText}\n` })
   }
 
-  parts.push({ text: `Output the complete ${toLang} translation only.\n` })
-
   const result = await model.generateContent(parts)
   return result.response.text()
 }
@@ -83,9 +90,11 @@ export async function backTranslateMessage({ profile, message }) {
   const toLang = isSelf ? profile.sourceLanguage : profile.targetLanguage
 
   const model = getModel(profile)
-  const result = await model.generateContent(
-    `Translate the following text from ${fromLang} into ${toLang}. Output the translation only:\n\n${message.translation}`
-  )
+  const backInstruction = (profile.backTranslateInstruction || '')
+    .replace(/\{fromLang\}/g, fromLang)
+    .replace(/\{toLang\}/g, toLang)
+    .replace(/\{text\}/g, message.translation)
+  const result = await model.generateContent(backInstruction)
   return result.response.text()
 }
 

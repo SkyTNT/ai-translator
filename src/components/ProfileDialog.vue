@@ -92,6 +92,22 @@
                   <div class="d-flex justify-end mb-3">
                     <v-btn size="x-small" variant="text" color="primary" @click="resetSystemPrompt">{{ t('profile.resetPrompt') }}</v-btn>
                   </div>
+                  <v-textarea v-model="editingProfile.translateInstruction" :label="t('profile.translateInstruction')" variant="outlined" density="compact" :hint="t('profile.translateInstructionHint')" persistent-hint rows="3" class="mb-1" />
+                  <div class="d-flex justify-end mb-3">
+                    <v-btn size="x-small" variant="text" color="primary" @click="resetTranslateInstruction">{{ t('profile.resetPrompt') }}</v-btn>
+                  </div>
+                  <v-textarea v-model="editingProfile.backTranslateInstruction" :label="t('profile.backTranslateInstruction')" variant="outlined" density="compact" :hint="t('profile.backTranslateInstructionHint')" persistent-hint rows="3" class="mb-1" />
+                  <div class="d-flex justify-end mb-3">
+                    <v-btn size="x-small" variant="text" color="primary" @click="resetBackTranslateInstruction">{{ t('profile.resetPrompt') }}</v-btn>
+                  </div>
+                  <v-textarea v-model="editingProfile.contextMessageFormat" :label="t('profile.contextMessageFormat')" variant="outlined" density="compact" :hint="t('profile.contextMessageFormatHint')" persistent-hint rows="3" class="mb-1" />
+                  <div class="d-flex justify-end mb-3">
+                    <v-btn size="x-small" variant="text" color="primary" @click="resetContextMessageFormat">{{ t('profile.resetPrompt') }}</v-btn>
+                  </div>
+                  <v-textarea v-model="editingProfile.contextHeader" :label="t('profile.contextHeader')" variant="outlined" density="compact" :hint="t('profile.contextHeaderHint')" persistent-hint rows="3" class="mb-1" />
+                  <div class="d-flex justify-end mb-3">
+                    <v-btn size="x-small" variant="text" color="primary" @click="resetContextHeader">{{ t('profile.resetPrompt') }}</v-btn>
+                  </div>
                   <v-divider class="mb-3" />
                   <div class="d-flex gap-2">
                     <v-btn color="primary" type="submit" :loading="saving" prepend-icon="mdi-content-save">{{ t('profile.save') }}</v-btn>
@@ -124,6 +140,22 @@
               <v-textarea v-model="editingProfile.systemPrompt" :label="t('profile.systemPrompt')" variant="outlined" density="compact" :hint="t('profile.systemPromptHint')" persistent-hint rows="6" class="mb-1" />
               <div class="d-flex justify-end mb-3">
                 <v-btn size="x-small" variant="text" color="primary" @click="resetSystemPrompt">{{ t('profile.resetPrompt') }}</v-btn>
+              </div>
+              <v-textarea v-model="editingProfile.translateInstruction" :label="t('profile.translateInstruction')" variant="outlined" density="compact" :hint="t('profile.translateInstructionHint')" persistent-hint rows="3" class="mb-1" />
+              <div class="d-flex justify-end mb-3">
+                <v-btn size="x-small" variant="text" color="primary" @click="resetTranslateInstruction">{{ t('profile.resetPrompt') }}</v-btn>
+              </div>
+              <v-textarea v-model="editingProfile.backTranslateInstruction" :label="t('profile.backTranslateInstruction')" variant="outlined" density="compact" :hint="t('profile.backTranslateInstructionHint')" persistent-hint rows="3" class="mb-1" />
+              <div class="d-flex justify-end mb-3">
+                <v-btn size="x-small" variant="text" color="primary" @click="resetBackTranslateInstruction">{{ t('profile.resetPrompt') }}</v-btn>
+              </div>
+              <v-textarea v-model="editingProfile.contextMessageFormat" :label="t('profile.contextMessageFormat')" variant="outlined" density="compact" :hint="t('profile.contextMessageFormatHint')" persistent-hint rows="3" class="mb-1" />
+              <div class="d-flex justify-end mb-3">
+                <v-btn size="x-small" variant="text" color="primary" @click="resetContextMessageFormat">{{ t('profile.resetPrompt') }}</v-btn>
+              </div>
+              <v-textarea v-model="editingProfile.contextHeader" :label="t('profile.contextHeader')" variant="outlined" density="compact" :hint="t('profile.contextHeaderHint')" persistent-hint rows="3" class="mb-1" />
+              <div class="d-flex justify-end mb-3">
+                <v-btn size="x-small" variant="text" color="primary" @click="resetContextHeader">{{ t('profile.resetPrompt') }}</v-btn>
               </div>
               <v-divider class="mb-3" />
               <div class="d-flex gap-2">
@@ -284,6 +316,30 @@ function deleteProfile() {
 function resetSystemPrompt() {
   if (editingProfile.value) {
     editingProfile.value.systemPrompt = DEFAULT_PROFILE.systemPrompt
+  }
+}
+
+function resetTranslateInstruction() {
+  if (editingProfile.value) {
+    editingProfile.value.translateInstruction = DEFAULT_PROFILE.translateInstruction
+  }
+}
+
+function resetBackTranslateInstruction() {
+  if (editingProfile.value) {
+    editingProfile.value.backTranslateInstruction = DEFAULT_PROFILE.backTranslateInstruction
+  }
+}
+
+function resetContextMessageFormat() {
+  if (editingProfile.value) {
+    editingProfile.value.contextMessageFormat = DEFAULT_PROFILE.contextMessageFormat
+  }
+}
+
+function resetContextHeader() {
+  if (editingProfile.value) {
+    editingProfile.value.contextHeader = DEFAULT_PROFILE.contextHeader
   }
 }
 

@@ -22,10 +22,22 @@ Translation rules:
 - If the input is an image, describe and translate any visible text
 - If the input is audio, translate the spoken content — do not output the original transcript
 - Return ONLY the translation — no explanations, no notes, no prefixes`,
+  translateInstruction: `Translate the following {contentDesc} message from {role} from {fromLang} into {toLang}.
+Output the complete {toLang} translation only.`,
+  backTranslateInstruction: `Translate the following text from {fromLang} into {toLang}. Output the translation only:\n\n{text}`,
+  contextMessageFormat: `{role}: {original}\nTranslation: {translation}`,
+  contextHeader: `Conversation history for context:\n\n{context}\n\n---\n\n`,
 }
 
 export const useProfileStore = defineStore('profiles', () => {
-  const profiles = ref(JSON.parse(localStorage.getItem('translator_profiles') || '[]'))
+  const rawProfiles = JSON.parse(localStorage.getItem('translator_profiles') || '[]')
+  const profiles = ref(rawProfiles.map(p => ({
+    translateInstruction: DEFAULT_PROFILE.translateInstruction,
+    backTranslateInstruction: DEFAULT_PROFILE.backTranslateInstruction,
+    contextMessageFormat: DEFAULT_PROFILE.contextMessageFormat,
+    contextHeader: DEFAULT_PROFILE.contextHeader,
+    ...p,
+  })))
   const activeProfileId = ref(localStorage.getItem('translator_active_profile') || null)
   function allocId() {
     return profiles.value.length === 0 ? 1 : Math.max(...profiles.value.map(p => p.id)) + 1
