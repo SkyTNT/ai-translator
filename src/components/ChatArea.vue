@@ -42,7 +42,7 @@ const bottomEl = ref(null)
 const session = computed(() => sessionStore.activeSession)
 const profile = computed(() => {
   if (!session.value) return null
-  return profileStore.profiles.find(p => p.id === session.value.profileId) || profileStore.activeProfile
+  return profileStore.profiles.find(p => p.id === session.value.profileId) || profileStore.profiles[0]
 })
 
 watch(

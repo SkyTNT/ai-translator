@@ -4,7 +4,8 @@ import i18n from '../i18n/index.js'
 
 export const useSessionStore = defineStore('sessions', () => {
   const sessions = ref(JSON.parse(localStorage.getItem('translator_sessions') || '[]'))
-  const activeSessionId = ref(localStorage.getItem('translator_active_session') || null)
+  const _storedSessionId = localStorage.getItem('translator_active_session')
+  const activeSessionId = ref(_storedSessionId ? Number(_storedSessionId) : null)
   function allocSessionId() {
     return sessions.value.length === 0 ? 1 : Math.max(...sessions.value.map(s => s.id)) + 1
   }

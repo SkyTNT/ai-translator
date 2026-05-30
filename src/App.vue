@@ -23,7 +23,7 @@
             {{ t('app.newSession') }}
           </v-btn>
           <v-btn
-            v-if="!profileStore.activeProfile?.apiKey"
+            v-if="!profileStore.profiles[0]?.apiKey"
             variant="outlined"
             rounded="xl"
             class="mt-3"
@@ -83,14 +83,14 @@ watch(() => settingsStore.primaryColor, (color) => {
 
 function newSession() {
   const name = `${t('session.defaultName')} ${sessionStore.sessions.length + 1}`
-  sessionStore.createSession(profileStore.activeProfileId, name)
+  sessionStore.createSession(sessionStore.activeSession?.profileId || profileStore.profiles[0]?.id, name)
 }
 
 async function handleSend({ role, text, images, audio }) {
   const session = sessionStore.activeSession
   if (!session) return
 
-  const profile = profileStore.profiles.find(p => p.id === session.profileId) || profileStore.activeProfile
+  const profile = profileStore.profiles.find(p => p.id === session.profileId) || profileStore.profiles[0]
 
   const msg = sessionStore.addMessage(session.id, {
     role,

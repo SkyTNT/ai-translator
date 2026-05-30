@@ -44,7 +44,7 @@
                     <v-icon size="18">mdi-account-circle-outline</v-icon>
                   </template>
                   <v-list-item-title class="text-body-2">{{ p.name }}</v-list-item-title>
-                  <v-list-item-subtitle v-if="p.id === profileStore.activeProfileId" class="text-caption text-primary">
+                  <v-list-item-subtitle v-if="p.id === sessionStore.activeSession?.profileId" class="text-caption text-primary">
                     {{ t('profile.current') }}
                   </v-list-item-subtitle>
                   <template #append>
@@ -122,7 +122,7 @@
                   <v-divider class="mb-3" />
                   <div class="d-flex gap-2">
                     <v-btn color="primary" type="submit" :loading="saving" prepend-icon="mdi-content-save">{{ t('profile.save') }}</v-btn>
-                    <v-btn v-if="selectedId !== profileStore.activeProfileId" variant="outlined" prepend-icon="mdi-check-circle-outline" @click="useThisProfile">{{ t('profile.use') }}</v-btn>
+                    <v-btn v-if="selectedId !== sessionStore.activeSession?.profileId" variant="outlined" prepend-icon="mdi-check-circle-outline" @click="useThisProfile">{{ t('profile.use') }}</v-btn>
                     <v-btn v-else variant="tonal" color="success" prepend-icon="mdi-check-circle" disabled>{{ t('profile.inUse') }}</v-btn>
                   </div>
                 </v-form>
@@ -178,7 +178,7 @@
               <v-divider class="mb-3" />
               <div class="d-flex gap-2">
                 <v-btn color="primary" type="submit" :loading="saving" prepend-icon="mdi-content-save">{{ t('profile.save') }}</v-btn>
-                <v-btn v-if="selectedId !== profileStore.activeProfileId" variant="outlined" prepend-icon="mdi-check-circle-outline" @click="useThisProfile">{{ t('profile.use') }}</v-btn>
+                <v-btn v-if="selectedId !== sessionStore.activeSession?.profileId" variant="outlined" prepend-icon="mdi-check-circle-outline" @click="useThisProfile">{{ t('profile.use') }}</v-btn>
                 <v-btn v-else variant="tonal" color="success" prepend-icon="mdi-check-circle" disabled>{{ t('profile.inUse') }}</v-btn>
               </div>
             </v-form>
@@ -201,7 +201,7 @@
                   <v-icon size="18">mdi-account-circle-outline</v-icon>
                 </template>
                 <v-list-item-title>{{ p.name }}</v-list-item-title>
-                <v-list-item-subtitle v-if="p.id === profileStore.activeProfileId" class="text-caption text-primary">
+                <v-list-item-subtitle v-if="p.id === sessionStore.activeSession?.profileId" class="text-caption text-primary">
                   {{ t('profile.current') }}
                 </v-list-item-subtitle>
                 <template #append>
@@ -255,6 +255,7 @@ import { ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 import { useProfileStore, DEFAULT_PROFILE } from '../stores/profileStore'
+import { useSessionStore } from '../stores/sessionStore'
 
 const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue'])
@@ -262,8 +263,9 @@ const emit = defineEmits(['update:modelValue'])
 const { t } = useI18n()
 const { smAndUp } = useDisplay()
 const profileStore = useProfileStore()
+const sessionStore = useSessionStore()
 
-const selectedId = ref(profileStore.activeProfileId)
+const selectedId = ref(sessionStore.activeSession?.profileId || profileStore.profiles[0]?.id)
 const editingProfile = ref(null)
 const showApiKey = ref(false)
 const showFishAudioKey = ref(false)
@@ -276,7 +278,7 @@ watch(
   () => props.modelValue,
   (v) => {
     if (v) {
-      selectedId.value = profileStore.activeProfileId
+      selectedId.value = sessionStore.activeSession?.profileId || profileStore.profiles[0]?.id
       loadProfile(selectedId.value)
     }
   }
@@ -320,7 +322,9 @@ function saveProfile() {
 
 function useThisProfile() {
   saveProfile()
-  profileStore.setActive(selectedId.value)
+  if (sessionStore.activeSession) {
+    sessionStore.updateSessionProfile(sessionStore.activeSession.id, selectedId.value)
+  }
 }
 
 function confirmDelete(id) {
@@ -333,7 +337,7 @@ function deleteProfile() {
     profileStore.deleteProfile(deleteTargetId.value)
     if (selectedId.value === deleteTargetId.value) {
       editingProfile.value = null
-      loadProfile(profileStore.activeProfileId)
+      loadProfile(sessionStore.activeSession?.profileId || profileStore.profiles[0]?.id)
     }
   }
   deleteDialog.value = false

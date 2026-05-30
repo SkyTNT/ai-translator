@@ -191,7 +191,7 @@ const menuPage = ref('main')
 
 const activeSession = computed(() => sessionStore.activeSession)
 const sessionProfile = computed(() =>
-  profileStore.profiles.find(p => p.id === activeSession.value?.profileId) || profileStore.activeProfile
+  profileStore.profiles.find(p => p.id === activeSession.value?.profileId) || profileStore.profiles[0]
 )
 const currentLocaleName = computed(() =>
   LOCALES.find(l => l.value === locale.value)?.label ?? locale.value
@@ -200,8 +200,6 @@ const currentLocaleName = computed(() =>
 function selectProfile(profileId) {
   if (activeSession.value) {
     sessionStore.updateSessionProfile(activeSession.value.id, profileId)
-  } else {
-    profileStore.setActive(profileId)
   }
 }
 

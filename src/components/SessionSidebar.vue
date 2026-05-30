@@ -148,7 +148,7 @@ function highlightSnippet(text) {
 
 function createNew() {
   const name = `${t('session.defaultName')} ${sessionStore.sessions.length + 1}`
-  sessionStore.createSession(profileStore.activeProfileId, name)
+  sessionStore.createSession(sessionStore.activeSession?.profileId || profileStore.profiles[0]?.id, name)
 }
 
 function selectSession(id) {

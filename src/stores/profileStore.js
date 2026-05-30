@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 export const DEFAULT_PROFILE = {
   name: 'Default',
@@ -42,26 +42,18 @@ export const useProfileStore = defineStore('profiles', () => {
     contextHeader: DEFAULT_PROFILE.contextHeader,
     ...p,
   })))
-  const activeProfileId = ref(localStorage.getItem('translator_active_profile') || null)
+
   function allocId() {
     return profiles.value.length === 0 ? 1 : Math.max(...profiles.value.map(p => p.id)) + 1
   }
 
   if (profiles.value.length === 0) {
-    const def = { id: allocId(), ...DEFAULT_PROFILE }
-    profiles.value.push(def)
-    activeProfileId.value = def.id
-    persist()
-  } else if (!activeProfileId.value) {
-    activeProfileId.value = profiles.value[0].id
+    profiles.value.push({ id: allocId(), ...DEFAULT_PROFILE })
     persist()
   }
 
-  const activeProfile = computed(() => profiles.value.find(p => p.id === activeProfileId.value))
-
   function persist() {
     localStorage.setItem('translator_profiles', JSON.stringify(profiles.value))
-    localStorage.setItem('translator_active_profile', activeProfileId.value)
   }
 
   function addProfile(data) {
@@ -82,16 +74,8 @@ export const useProfileStore = defineStore('profiles', () => {
   function deleteProfile(id) {
     if (profiles.value.length <= 1) return
     profiles.value = profiles.value.filter(p => p.id !== id)
-    if (activeProfileId.value === id) {
-      activeProfileId.value = profiles.value[0].id
-    }
     persist()
   }
 
-  function setActive(id) {
-    activeProfileId.value = id
-    persist()
-  }
-
-  return { profiles, activeProfileId, activeProfile, addProfile, updateProfile, deleteProfile, setActive }
+  return { profiles, addProfile, updateProfile, deleteProfile }
 })

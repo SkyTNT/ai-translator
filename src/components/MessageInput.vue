@@ -226,12 +226,12 @@ const emit = defineEmits(['send'])
 const { t } = useI18n()
 const profileStore = useProfileStore()
 const sessionStore = useSessionStore()
-const { profiles, activeProfile } = storeToRefs(profileStore)
+const { profiles } = storeToRefs(profileStore)
 const { activeSession } = storeToRefs(sessionStore)
 
 const currentProfile = computed(() => {
   const profileId = activeSession.value?.profileId
-  return profiles.value.find(p => p.id === profileId) || activeProfile.value
+  return profiles.value.find(p => p.id === profileId) || profiles.value[0]
 })
 
 const role = ref('self')

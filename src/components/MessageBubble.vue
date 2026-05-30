@@ -458,8 +458,8 @@ const ttsCurrentTime = ref(0)
 const ttsDuration = ref(0)
 const ttsProfile = computed(() => {
   const session = sessionStore.activeSession
-  if (!session) return profileStore.activeProfile
-  return profileStore.profiles.find(p => p.id === session.profileId) || profileStore.activeProfile
+  if (!session) return profileStore.profiles[0]
+  return profileStore.profiles.find(p => p.id === session.profileId) || profileStore.profiles[0]
 })
 const ttsAvailable = computed(() => !!ttsProfile.value?.fishAudioApiKey)
 const ttsLoading = ref(false)
