@@ -215,14 +215,24 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { useProfileStore } from '../stores/profileStore'
+import { useSessionStore } from '../stores/sessionStore'
 import { fileToBase64 } from '../services/geminiService'
 import { openViewerFromSrc } from '../composables/useViewer.js'
 
 const emit = defineEmits(['send'])
 const { t } = useI18n()
 const profileStore = useProfileStore()
+const sessionStore = useSessionStore()
+const { profiles, activeProfile } = storeToRefs(profileStore)
+const { activeSession } = storeToRefs(sessionStore)
+
+const currentProfile = computed(() => {
+  const profileId = activeSession.value?.profileId
+  return profiles.value.find(p => p.id === profileId) || activeProfile.value
+})
 
 const role = ref('self')
 const inputText = ref('')
@@ -242,8 +252,8 @@ let mediaRecorder = null
 let recordingInterval = null
 let audioChunks = []
 
-const sourceLang = computed(() => profileStore.activeProfile?.sourceLanguage || t('profile.sourceLang'))
-const targetLang = computed(() => profileStore.activeProfile?.targetLanguage || t('profile.targetLang'))
+const sourceLang = computed(() => currentProfile.value?.sourceLanguage || t('profile.sourceLang'))
+const targetLang = computed(() => currentProfile.value?.targetLanguage || t('profile.targetLang'))
 
 const canSend = computed(() =>
   inputText.value.trim() || attachedImages.value.length > 0 || attachedAudio.value
