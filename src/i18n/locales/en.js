@@ -38,6 +38,8 @@ export default {
     placeholderSelf: 'Type a message as Self ({lang})...',
     placeholderOther: 'Type a message as Other ({lang})...',
     uploadImage: 'Upload image',
+    takePhoto: 'Take photo',
+    chooseGallery: 'Choose from gallery',
     recordAudio: 'Record audio',
     uploadAudio: 'Upload audio file',
     stopRecording: 'Stop recording',

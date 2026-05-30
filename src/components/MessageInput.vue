@@ -95,8 +95,22 @@
 
       <v-spacer />
 
-      <!-- Image upload -->
-      <v-tooltip :text="t('input.uploadImage')" location="top">
+      <!-- Take photo -->
+      <v-tooltip :text="t('input.takePhoto')" location="top">
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-camera-outline"
+            variant="text"
+            size="small"
+            color="grey-darken-1"
+            @click="cameraInput.click()"
+          />
+        </template>
+      </v-tooltip>
+
+      <!-- Choose from gallery -->
+      <v-tooltip :text="t('input.chooseGallery')" location="top">
         <template #activator="{ props }">
           <v-btn
             v-bind="props"
@@ -176,6 +190,14 @@
 
   <!-- Hidden file inputs -->
   <input
+    ref="cameraInput"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    style="display: none;"
+    @change="handleImageFiles"
+  />
+  <input
     ref="imageInput"
     type="file"
     accept="image/*"
@@ -210,6 +232,7 @@ const attachedAudio = ref(null)
 const isRecording = ref(false)
 const recordingSeconds = ref(0)
 const imageInput = ref(null)
+const cameraInput = ref(null)
 const audioInput = ref(null)
 const audioPreviewEl = ref(null)
 const audioPlaying = ref(false)
@@ -371,10 +394,6 @@ function send() {
   50% { opacity: 0.3; }
 }
 .image-overlay {
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-.v-card:hover .image-overlay {
   opacity: 1;
 }
 </style>

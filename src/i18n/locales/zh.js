@@ -38,6 +38,8 @@ export default {
     placeholderSelf: '输入己方消息（{lang}）...',
     placeholderOther: '输入对方消息（{lang}）...',
     uploadImage: '上传图片',
+    takePhoto: '拍照',
+    chooseGallery: '从相册选择',
     recordAudio: '录制音频',
     uploadAudio: '上传音频文件',
     stopRecording: '停止录音',
