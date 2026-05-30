@@ -137,6 +137,16 @@
             <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-on-surface-variant opacity-60']">
               {{ t('chat.backTranslationLabel') }}
             </span>
+            <v-btn
+              v-if="message.backTranslation && !message.isBackTranslating"
+              icon="mdi-close"
+              size="x-small"
+              variant="text"
+              :color="isSelf ? 'on-primary' : 'on-surface-variant'"
+              density="compact"
+              style="margin-left: auto; opacity: 0.5; min-width: 20px; min-height: 20px;"
+              @click="deleteBackTranslation"
+            />
           </div>
           <div v-if="message.isBackTranslating" class="d-flex align-center gap-1">
             <v-progress-circular size="12" width="2" indeterminate :color="isSelf ? 'on-primary' : 'primary'" />
@@ -161,6 +171,15 @@
             <span :class="['text-caption', isSelf ? 'text-on-primary opacity-60' : 'text-on-surface-variant opacity-60']">
               {{ t('chat.ttsLabel') }}
             </span>
+            <v-btn
+              icon="mdi-close"
+              size="x-small"
+              variant="text"
+              :color="isSelf ? 'on-primary' : 'on-surface-variant'"
+              density="compact"
+              style="margin-left: auto; opacity: 0.5; min-width: 20px; min-height: 20px;"
+              @click="deleteTTSAudio"
+            />
           </div>
           <div class="d-flex align-center gap-2 px-2 py-1 rounded-pill" :style="audioTrackStyle">
             <v-btn
@@ -455,6 +474,17 @@ async function generateTTS() {
 }
 
 onUnmounted(() => stopTTS())
+
+function deleteBackTranslation() {
+  sessionStore.updateMessage(sessionStore.activeSessionId, props.message.id, { backTranslation: null })
+}
+
+function deleteTTSAudio() {
+  stopTTS()
+  ttsCurrentTime.value = 0
+  ttsDuration.value = 0
+  sessionStore.updateMessage(sessionStore.activeSessionId, props.message.id, { ttsAudio: null })
+}
 
 function openFullscreen() {
   openTranslationViewer({
