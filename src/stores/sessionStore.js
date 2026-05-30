@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import i18n from '../i18n/index.js'
 
 export const useSessionStore = defineStore('sessions', () => {
   const sessions = ref(JSON.parse(localStorage.getItem('translator_sessions') || '[]'))
@@ -26,7 +27,7 @@ export const useSessionStore = defineStore('sessions', () => {
   function createSession(profileId, name) {
     const s = {
       id: allocSessionId(),
-      name: name || `会话 ${sessions.value.length + 1}`,
+      name: name || `${i18n.global.t('session.defaultName')} ${sessions.value.length + 1}`,
       profileId,
       messages: [],
       createdAt: new Date().toISOString(),

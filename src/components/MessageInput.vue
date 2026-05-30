@@ -242,8 +242,8 @@ let mediaRecorder = null
 let recordingInterval = null
 let audioChunks = []
 
-const sourceLang = computed(() => profileStore.activeProfile?.sourceLanguage || '源语言')
-const targetLang = computed(() => profileStore.activeProfile?.targetLanguage || '目标语言')
+const sourceLang = computed(() => profileStore.activeProfile?.sourceLanguage || t('profile.sourceLang'))
+const targetLang = computed(() => profileStore.activeProfile?.targetLanguage || t('profile.targetLang'))
 
 const canSend = computed(() =>
   inputText.value.trim() || attachedImages.value.length > 0 || attachedAudio.value
