@@ -88,8 +88,12 @@ export default {
     themeSystem: 'System',
     primaryColor: 'Accent color',
   },
+  viewer: {
+    hint: 'Scroll to zoom · Drag to pan · Double-click to reset',
+  },
   error: {
     translationFailed: 'Translation failed',
     profileNotFound: 'Profile not found',
+    apiKeyMissing: 'Please set API Key in Profile first',
   },
 }

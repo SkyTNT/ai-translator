@@ -88,8 +88,12 @@ export default {
     themeSystem: '跟随系统',
     primaryColor: '主题色',
   },
+  viewer: {
+    hint: '滚轮缩放 · 拖动平移 · 双击重置',
+  },
   error: {
     translationFailed: '翻译失败',
     profileNotFound: '未找到 Profile',
+    apiKeyMissing: '请先在 Profile 中设置 API Key',
   },
 }

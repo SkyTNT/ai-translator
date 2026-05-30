@@ -77,7 +77,7 @@ async function handleRetranslate(msg) {
   } catch (err) {
     sessionStore.updateMessage(session.value.id, msg.id, {
       isTranslating: false,
-      error: err.message || t('error.translationFailed'),
+      error: (err.message?.startsWith('error.') ? t(err.message) : err.message) || t('error.translationFailed'),
     })
   }
 }

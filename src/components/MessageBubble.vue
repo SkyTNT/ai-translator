@@ -261,7 +261,7 @@ const props = defineProps({
 const emit = defineEmits(['delete', 'retranslate', 'back-translate'])
 
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const isSelf = computed(() => props.message.role === 'self')
 
 // Image layout
@@ -305,7 +305,7 @@ function fmtTime(secs) {
 
 function formatTime(iso) {
   if (!iso) return ''
-  return new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString(locale.value, { hour: '2-digit', minute: '2-digit' })
 }
 
 async function copyTranslation() {

@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 function getModel(profile, { systemInstruction } = {}) {
-  if (!profile.apiKey) throw new Error('请先在Profile中设置API Key')
+  if (!profile.apiKey) throw new Error('error.apiKeyMissing')
   const genAI = new GoogleGenerativeAI(profile.apiKey)
   const requestOptions = profile.endpoint ? { baseUrl: profile.endpoint } : undefined
   return genAI.getGenerativeModel({

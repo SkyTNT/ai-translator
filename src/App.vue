@@ -115,7 +115,7 @@ async function handleSend({ role, text, images, audio }) {
   } catch (err) {
     sessionStore.updateMessage(session.id, msg.id, {
       isTranslating: false,
-      error: err.message || t('error.translationFailed'),
+      error: (err.message?.startsWith('error.') ? t(err.message) : err.message) || t('error.translationFailed'),
     })
   }
 }

@@ -1,6 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { useViewer } from '../composables/useViewer.js'
 
+const { t } = useI18n()
 const { viewer, viewerEl, onViewerMouseDown, onViewerMouseMove, onViewerMouseUp, onViewerDblClick, onViewerMounted } = useViewer()
 </script>
 
@@ -47,7 +49,7 @@ const { viewer, viewerEl, onViewerMouseDown, onViewerMouseMove, onViewerMouseUp,
       <!-- Hint -->
       <div style="position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); pointer-events: none;">
         <v-chip size="small" style="opacity: 0.45; background: rgba(0,0,0,0.5); color: #fff;">
-          Scroll to zoom · Drag to pan · Double-click to reset
+          {{ t('viewer.hint') }}
         </v-chip>
       </div>
 
