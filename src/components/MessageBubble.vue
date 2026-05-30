@@ -15,12 +15,11 @@
     </v-avatar>
 
     <div style="max-width: 70%; min-width: 120px;">
-      <!-- Role label -->
-      <div
-        class="text-caption text-medium-emphasis mb-1"
-        :class="isSelf ? 'text-right' : 'text-left'"
-      >
-        {{ isSelf ? t('chat.self') : t('chat.other') }}
+      <!-- Role label + timestamp -->
+      <div class="d-flex align-center mb-1" :class="isSelf ? 'flex-row-reverse' : 'flex-row'">
+        <span class="text-caption text-medium-emphasis">{{ isSelf ? t('chat.self') : t('chat.other') }}</span>
+        <span class="text-caption text-medium-emphasis mx-1">·</span>
+        <span class="text-caption text-medium-emphasis">{{ formatTime(message.timestamp) }}</span>
       </div>
 
       <!-- Bubble -->
@@ -273,16 +272,16 @@
         :class="isSelf ? 'justify-end' : 'justify-start'"
       >
         <!-- Delete -->
-        <v-btn icon variant="text" size="small" color="error" style="min-width: 40px; min-height: 40px;" @click="$emit('delete')">
-          <v-icon size="16">mdi-trash-can-outline</v-icon>
+        <v-btn icon variant="text" size="x-small" color="error" @click="$emit('delete')">
+          <v-icon size="14">mdi-trash-can-outline</v-icon>
         </v-btn>
 
         <template v-if="message.translation && !message.isTranslating">
           <!-- Fullscreen -->
           <v-tooltip :text="t('chat.fullscreen')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="openFullscreen">
-                <v-icon size="16">mdi-fullscreen</v-icon>
+              <v-btn v-bind="props" icon variant="text" size="x-small" color="on-surface-variant" @click="openFullscreen">
+                <v-icon size="14">mdi-fullscreen</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -290,8 +289,8 @@
           <!-- Edit translation -->
           <v-tooltip :text="t('chat.editTranslation')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="startEditTranslation">
-                <v-icon size="16">mdi-pencil-outline</v-icon>
+              <v-btn v-bind="props" icon variant="text" size="x-small" color="on-surface-variant" @click="startEditTranslation">
+                <v-icon size="14">mdi-pencil-outline</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -299,8 +298,8 @@
           <!-- Copy translation -->
           <v-tooltip :text="t('chat.copy')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="copyTranslation">
-                <v-icon size="16">mdi-content-copy</v-icon>
+              <v-btn v-bind="props" icon variant="text" size="x-small" color="on-surface-variant" @click="copyTranslation">
+                <v-icon size="14">mdi-content-copy</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -308,8 +307,8 @@
           <!-- Re-translate -->
           <v-tooltip :text="t('chat.retranslate')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;" @click="$emit('retranslate')">
-                <v-icon size="16">mdi-refresh</v-icon>
+              <v-btn v-bind="props" icon variant="text" size="x-small" color="on-surface-variant" @click="$emit('retranslate')">
+                <v-icon size="14">mdi-refresh</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -317,11 +316,11 @@
           <!-- Back-translate -->
           <v-tooltip :text="t('chat.backTranslate')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;"
+              <v-btn v-bind="props" icon variant="text" size="x-small" color="on-surface-variant"
                 :loading="message.isBackTranslating"
                 @click="$emit('back-translate')"
               >
-                <v-icon size="16">mdi-rotate-left</v-icon>
+                <v-icon size="14">mdi-rotate-left</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
@@ -329,19 +328,16 @@
           <!-- TTS -->
           <v-tooltip v-if="ttsAvailable" :text="t('chat.tts')" location="top">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small" color="on-surface-variant" style="min-width: 40px; min-height: 40px;"
+              <v-btn v-bind="props" icon variant="text" size="x-small" color="on-surface-variant"
                 :loading="ttsLoading"
                 @click="generateTTS"
               >
-                <v-icon size="16">mdi-volume-high</v-icon>
+                <v-icon size="14">mdi-volume-high</v-icon>
               </v-btn>
             </template>
           </v-tooltip>
         </template>
 
-        <span class="text-caption text-medium-emphasis">
-          {{ formatTime(message.timestamp) }}
-        </span>
       </div>
     </div>
 
