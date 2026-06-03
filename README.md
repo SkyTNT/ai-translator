@@ -8,11 +8,16 @@ Context-aware conversational translation powered by Google Gemini API, with mult
 - **Multimodal input** — text, image upload (including paste), microphone recording, and audio file upload
 - **Dual-role conversation** — toggle between Self (source language) and Other (target language) to simulate a real bilingual exchange
 - **Back-translation** — verify any translation by back-translating it into the original language
-- **Profile management** — create multiple profiles, each with its own API key, model, language pair, context size, and custom system prompt
+- **Inline translation editing** — click the pencil icon on any translation to edit it directly in the chat
+- **Fullscreen translation viewer** — open any translation in a fullscreen overlay with adjustable font size
+- **Text-to-speech (Fish Audio)** — synthesize translations using Fish Audio TTS; per-role voice reference IDs configurable in the profile
+- **Profile management** — create multiple profiles, each with its own API key, model, language pair, context size, and fully configurable prompt templates
+- **Profile JSON export / import** — back up or share profiles as JSON files
 - **Per-session profile binding** — each session is bound to a specific profile; switching sessions automatically reflects the correct profile in the toolbar, and changing the profile in the toolbar updates only the current session
 - **Session management** — multiple concurrent sessions with rename, search, clear, and delete support
 - **Content search** — session search matches both session names and message content, with highlighted excerpts shown inline
-- **Client-side persistence** — all sessions and profiles stored in localStorage; no backend required
+- **Appearance settings** — light / dark / system theme and custom primary color
+- **Client-side persistence** — all sessions, profiles, and settings stored in localStorage; no backend required
 
 ## Getting Started
 
@@ -48,6 +53,7 @@ Open `http://localhost:5173` in your browser.
 | UI | Vuetify 3 + Material Design Icons |
 | State | Pinia |
 | AI | Google Gemini (`@google/generative-ai`) |
+| TTS | Fish Audio REST API |
 | i18n | vue-i18n (Chinese / English) |
 | Build | Vite |
 | Package manager | pnpm |
@@ -57,20 +63,25 @@ Open `http://localhost:5173` in your browser.
 ```
 src/
 ├── components/
-│   ├── AppToolbar.vue      # Top toolbar
-│   ├── SessionSidebar.vue  # Left session drawer
-│   ├── ChatArea.vue        # Message list
-│   ├── MessageBubble.vue   # Single message (original + translation + back-translation)
-│   ├── MessageInput.vue    # Input bar (text / image / audio)
-│   ├── ProfileDialog.vue   # Profile management dialog
-│   └── ImageViewer.vue     # Full-screen image viewer
+│   ├── AppToolbar.vue          # Top toolbar
+│   ├── SessionSidebar.vue      # Left session drawer
+│   ├── ChatArea.vue            # Message list
+│   ├── MessageBubble.vue       # Single message (original + translation + back-translation)
+│   ├── MessageInput.vue        # Input bar (text / image / audio)
+│   ├── ProfileDialog.vue       # Profile management dialog
+│   ├── AppearanceDialog.vue    # Theme and color settings dialog
+│   ├── TranslationViewer.vue   # Fullscreen translation overlay
+│   └── ImageViewer.vue         # Full-screen image viewer
 ├── stores/
-│   ├── profileStore.js     # Profile state (Pinia)
-│   └── sessionStore.js     # Session & message state (Pinia)
+│   ├── profileStore.js         # Profile state (Pinia)
+│   ├── sessionStore.js         # Session & message state (Pinia)
+│   └── settingsStore.js        # Appearance settings (Pinia)
 ├── services/
-│   └── geminiService.js    # Gemini API wrapper
+│   ├── geminiService.js        # Gemini API wrapper
+│   └── fishAudioService.js     # Fish Audio TTS wrapper
 ├── composables/
-│   └── useViewer.js        # Image viewer composable
+│   ├── useViewer.js            # Image viewer composable
+│   └── useTranslationViewer.js # Translation viewer composable
 └── i18n/
     ├── index.js
     └── locales/
@@ -78,14 +89,47 @@ src/
         └── en.js
 ```
 
-## System Prompt Variables
+## Prompt Template Variables
 
-Use these placeholders in a profile's system prompt — they are substituted automatically at translation time:
+All prompt templates in a profile are fully configurable. The following placeholders are substituted automatically at runtime:
+
+### System Prompt (`systemPrompt`)
 
 | Variable | Description |
 |----------|-------------|
 | `{sourceLanguage}` | Self language (e.g. `Chinese`) |
 | `{targetLanguage}` | Other language (e.g. `English`) |
+
+### Translate Instruction (`translateInstruction`)
+
+| Variable | Description |
+|----------|-------------|
+| `{contentDesc}` | Content type descriptor (e.g. `text`, `image`, `audio`) |
+| `{role}` | Speaker role (`Self` or `Other`) |
+| `{fromLang}` | Source language for this message |
+| `{toLang}` | Target language for this message |
+
+### Back-translate Instruction (`backTranslateInstruction`)
+
+| Variable | Description |
+|----------|-------------|
+| `{fromLang}` | Language of the translation to verify |
+| `{toLang}` | Language to back-translate into |
+| `{text}` | The translation text to back-translate |
+
+### Context Message Format (`contextMessageFormat`)
+
+| Variable | Description |
+|----------|-------------|
+| `{role}` | Speaker role |
+| `{original}` | Original message text |
+| `{translation}` | Translated message text |
+
+### Context Header (`contextHeader`)
+
+| Variable | Description |
+|----------|-------------|
+| `{context}` | Rendered conversation history block |
 
 ## Build & Deploy
 
