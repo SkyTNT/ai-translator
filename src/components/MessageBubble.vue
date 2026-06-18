@@ -29,10 +29,10 @@
         elevation="0"
       >
         <!-- Images -->
-        <div v-if="message.images?.length" class="mb-2">
+        <div v-if="message.images?.some(img => img.url)" class="mb-2">
           <div class="d-flex flex-wrap gap-2">
             <v-card
-              v-for="(img, i) in message.images"
+              v-for="(img, i) in message.images.filter(img => img.url)"
               :key="i"
               rounded="lg"
               elevation="0"
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Audio player -->
-        <div v-if="message.audio" class="mb-2">
+        <div v-if="message.audio?.url" class="mb-2">
           <div
             class="d-flex align-center gap-2 px-2 py-1 rounded-pill"
             :style="audioTrackStyle"
@@ -92,7 +92,7 @@
 
         <!-- Separator between media and text -->
         <v-divider
-          v-if="(message.images?.length || message.audio) && message.originalText"
+          v-if="(message.images?.some(img => img.url) || message.audio?.url) && message.originalText"
           :color="isSelf ? 'rgba(var(--v-theme-on-primary), 0.2)' : 'rgba(var(--v-theme-on-surface), 0.08)'"
           class="mb-2"
         />

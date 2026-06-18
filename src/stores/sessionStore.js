@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import i18n from '../i18n/index.js'
+import { idbSet, idbGet, idbDelete, idbDeleteByPrefix } from '../utils/idbStore.js'
 
 export const useSessionStore = defineStore('sessions', () => {
   const sessions = ref(JSON.parse(localStorage.getItem('translator_sessions') || '[]'))
@@ -20,9 +21,52 @@ export const useSessionStore = defineStore('sessions', () => {
 
   const activeSession = computed(() => sessions.value.find(s => s.id === activeSessionId.value))
 
+  // Strip binary data from images/audio before writing to localStorage (5MB limit)
   function persist() {
-    localStorage.setItem('translator_sessions', JSON.stringify(sessions.value))
+    const stripped = sessions.value.map(s => ({
+      ...s,
+      messages: s.messages.map(m => ({
+        ...m,
+        images: m.images?.map(img => ({ mimeType: img.mimeType })) || [],
+        audio: m.audio ? { mimeType: m.audio.mimeType } : null,
+      }))
+    }))
+    localStorage.setItem('translator_sessions', JSON.stringify(stripped))
     localStorage.setItem('translator_active_session', activeSessionId.value || '')
+  }
+
+  // After loading from localStorage, rehydrate image/audio binary data from IndexedDB
+  async function hydrateMediaData() {
+    for (const s of sessions.value) {
+      for (const m of s.messages) {
+        const needsHydration =
+          (m.images?.length && m.images.some(img => !img.url)) ||
+          (m.audio && !m.audio.url)
+        if (!needsHydration) continue
+        const media = await idbGet(`media_${s.id}_${m.id}`)
+        if (!media) continue
+        if (m.images?.length && media.images?.length) {
+          m.images = media.images.map(img => ({
+            ...img,
+            url: `data:${img.mimeType};base64,${img.data}`,
+          }))
+        }
+        if (m.audio && media.audio) {
+          m.audio = { ...media.audio, url: `data:${media.audio.mimeType};base64,${media.audio.data}` }
+        }
+      }
+    }
+  }
+  hydrateMediaData()
+
+  function saveMessageMedia(sessionId, messageId, images, audio) {
+    const hasImages = images?.some(img => img.data)
+    const hasAudio = audio?.data
+    if (!hasImages && !hasAudio) return
+    idbSet(`media_${sessionId}_${messageId}`, {
+      images: hasImages ? images.map(img => ({ data: img.data, mimeType: img.mimeType })) : [],
+      audio: hasAudio ? { data: audio.data, mimeType: audio.mimeType } : null,
+    })
   }
 
   function createSession(profileId, name) {
@@ -46,6 +90,7 @@ export const useSessionStore = defineStore('sessions', () => {
       activeSessionId.value = sessions.value[0]?.id || null
     }
     persist()
+    idbDeleteByPrefix(`media_${id}_`)
   }
 
   function renameSession(id, name) {
@@ -65,6 +110,7 @@ export const useSessionStore = defineStore('sessions', () => {
     s.messages.push(m)
     s.updatedAt = new Date().toISOString()
     persist()
+    saveMessageMedia(sessionId, m.id, m.images, m.audio)
     return m
   }
 
@@ -73,6 +119,7 @@ export const useSessionStore = defineStore('sessions', () => {
     if (!s) return
     s.messages = s.messages.filter(m => m.id !== messageId)
     persist()
+    idbDelete(`media_${sessionId}_${messageId}`)
   }
 
   function updateMessage(sessionId, messageId, updates) {
@@ -84,7 +131,11 @@ export const useSessionStore = defineStore('sessions', () => {
 
   function clearMessages(sessionId) {
     const s = sessions.value.find(s => s.id === sessionId)
-    if (s) { s.messages = []; persist() }
+    if (s) {
+      s.messages = []
+      persist()
+      idbDeleteByPrefix(`media_${sessionId}_`)
+    }
   }
 
   function updateSessionProfile(sessionId, profileId) {
