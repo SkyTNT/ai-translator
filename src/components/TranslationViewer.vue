@@ -43,9 +43,9 @@
 
       <!-- Scrollable content -->
       <div
-        style="flex: 1; overflow-y: auto; display: flex; align-items: center; justify-content: center; padding: 72px 48px 80px;"
+        style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 72px 48px 80px;"
       >
-        <div style="max-width: 960px; width: 100%; text-align: center;">
+        <div style="max-width: 960px; width: 100%; text-align: center; margin: auto 0;">
           <!-- Original text -->
           <div
             v-if="showOriginal && viewer.originalText"
