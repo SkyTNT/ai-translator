@@ -45,7 +45,10 @@
       <div
         style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 72px 48px 80px;"
       >
-        <div style="max-width: 960px; width: 100%; text-align: center; margin: auto 0;">
+        <div
+          style="max-width: 960px; width: 100%; margin: auto 0;"
+          :style="{ textAlign: viewer.align }"
+        >
           <!-- Original text -->
           <div
             v-if="showOriginal && viewer.originalText"
@@ -86,6 +89,16 @@
           />
         </div>
 
+        <!-- Align toggle -->
+        <v-btn
+          :icon="viewer.align === 'center' ? 'mdi-format-align-center' : 'mdi-format-align-left'"
+          size="small"
+          variant="text"
+          color="white"
+          density="comfortable"
+          @click="toggleAlign"
+        />
+
         <!-- Show original toggle -->
         <v-chip
           v-if="viewer.originalText"
@@ -114,4 +127,9 @@ const showOriginal = ref(false)
 
 const MIN_FONT = 14
 const MAX_FONT = 96
+
+function toggleAlign() {
+  viewer.align = viewer.align === 'center' ? 'left' : 'center'
+  localStorage.setItem('tv_align', viewer.align)
+}
 </script>

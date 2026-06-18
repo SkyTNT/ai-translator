@@ -5,6 +5,7 @@ const viewer = reactive({
   translation: '',
   originalText: '',
   fontSize: 32,
+  align: localStorage.getItem('tv_align') || 'center',
 })
 
 export function useTranslationViewer() {
